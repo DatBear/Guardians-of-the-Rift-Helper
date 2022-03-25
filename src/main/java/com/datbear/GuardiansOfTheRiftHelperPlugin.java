@@ -98,7 +98,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 			return anim == null || anim.getId() != GUARDIAN_ACTIVE_ANIM;
 		});
 
-		for(var guardian : guardians){
+		for(GameObject guardian : guardians){
 			Animation animation = ((DynamicObject) guardian.getRenderable()).getAnimation();
 			if(animation != null && animation.getId() == GUARDIAN_ACTIVE_ANIM) {
 				activeGuardians.add(guardian);
@@ -114,7 +114,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 			return;
 		}
 
-		var gameObject = event.getGameObject();
+		GameObject gameObject = event.getGameObject();
 		if(GUARDIAN_IDS.contains(event.getGameObject().getId())) {
 			guardians.removeIf(g -> g.getId() == gameObject.getId());
 			activeGuardians.removeIf(g -> g.getId() == gameObject.getId());

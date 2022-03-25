@@ -2,6 +2,7 @@ package com.datbear;
 
 import com.google.common.collect.ImmutableSet;
 import net.runelite.api.Client;
+import net.runelite.api.GameObject;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
@@ -12,6 +13,7 @@ import net.runelite.client.ui.overlay.outline.ModelOutlineRenderer;
 import javax.inject.Inject;
 import java.awt.*;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 public class GuardiansOfTheRiftHelperOverlay extends Overlay {
@@ -22,7 +24,7 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
     private static final Set<Integer> ELEMENTAL_GUARDIAN_IDS = ImmutableSet.of(43701, 43702, 43703, 43704);
 
     private static final Set<Integer> GUARDIAN_IDS = ImmutableSet.of(43705, 43701, 43710, 43702, 43703, 43711, 43704, 43708, 43712, 43707, 43706, 43709, 43702);
-    public static final HashMap<Integer, GuardianInfo> GUARDIAN_INFO = new HashMap<>(){{
+    public static final HashMap<Integer, GuardianInfo> GUARDIAN_INFO = new HashMap<Integer, GuardianInfo>(){{
         put(43701, GuardianInfo.AIR);
         put(43705, GuardianInfo.MIND);
         put(43702, GuardianInfo.WATER);
@@ -64,11 +66,11 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
     private void renderActiveGuardians(Graphics2D graphics){
         if(!plugin.isInMainRegion()) return;
 
-        var activeGuardians = plugin.getActiveGuardians();
+        Set<GameObject> activeGuardians = plugin.getActiveGuardians();
 
-        for(var guardian : activeGuardians) {
+        for(GameObject guardian : activeGuardians) {
             if(guardian == null) continue;
-            var hull = guardian.getConvexHull();
+            Shape hull = guardian.getConvexHull();
             if(hull == null) continue;
 
             Color color;
@@ -81,7 +83,7 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
             graphics.setColor(color);
 
             modelOutlineRenderer.drawOutline(guardian, 2, color, 2);
-            var info = GUARDIAN_INFO.get(guardian.getId());
+            GuardianInfo info = GUARDIAN_INFO.get(guardian.getId());
             OverlayUtil.renderImageLocation(client, graphics, guardian.getLocalLocation(), info.getRuneImage(itemManager), 505);
         }
     }
