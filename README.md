@@ -4,3 +4,5 @@
 * Highlights the Great Guardian when you have catalytic or elemental essence to give to him.
 * Highlights the Cell table when you have no Cells left.
 * Highlights the Essence piles when you have an Overcharged cell and there is a free guardian slot.
+* Adds a timer showing how long the current portal will last.
+* Overlay panel shows: Time since last portal, time until next game, and reward points.
