@@ -20,11 +20,8 @@ import java.util.HashMap;
 import java.util.Set;
 
 public class GuardiansOfTheRiftHelperOverlay extends Overlay {
-    GuardiansOfTheRiftHelperPlugin plugin;
-
     private static final Color GREEN = new Color(0,255,0, 150);
     private static final Color RED = new Color(255, 0, 0, 150);
-    private static final Set<Integer> ELEMENTAL_GUARDIAN_IDS = ImmutableSet.of(43701, 43702, 43703, 43704);
 
     public static final HashMap<Integer, GuardianInfo> GUARDIAN_INFO = new HashMap<Integer, GuardianInfo>(){{
         put(43701, GuardianInfo.AIR);
@@ -41,22 +38,27 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
         put(43708, GuardianInfo.BLOOD);
     }};
 
-    @Inject
-    ItemManager itemManager;
+    private static final int GUARDIAN_TICK_COUNT = 33;
+    private static final int PORTAL_TICK_COUNT = 43;
 
     @Inject
-    ModelOutlineRenderer modelOutlineRenderer;
+    private ItemManager itemManager;
 
     @Inject
+    private ModelOutlineRenderer modelOutlineRenderer;
+
     private Client client;
+    private GuardiansOfTheRiftHelperPlugin plugin;
+    private GuardiansOfTheRiftHelperConfig config;
 
     @Inject
-    public GuardiansOfTheRiftHelperOverlay(Client client, GuardiansOfTheRiftHelperPlugin plugin) {
+    public GuardiansOfTheRiftHelperOverlay(Client client, GuardiansOfTheRiftHelperPlugin plugin, GuardiansOfTheRiftHelperConfig config) {
         super();
         setPosition(OverlayPosition.DYNAMIC);
         setLayer(OverlayLayer.ABOVE_SCENE);
         this.client = client;
         this.plugin = plugin;
+        this.config = config;
     }
 
     @Override
@@ -66,8 +68,20 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
             highlightGreatGuardian(graphics);
             highlightUnchargedCellTable(graphics);
             highlightEssencePiles(graphics);
+            renderPortal(graphics);
         }
         return null;
+    }
+
+    private void renderPortal(Graphics2D graphics){
+        if(plugin.getPortalSpawnTime().isPresent() && plugin.getPortal() != null){
+            Instant spawnTime = plugin.getPortalSpawnTime().get();
+            GameObject portal = plugin.getPortal();
+            long millis = ChronoUnit.MILLIS.between(Instant.now(), spawnTime.plusMillis((long)Math.floor(PORTAL_TICK_COUNT * 600)));
+            String timeRemainingText = ""+(Math.round(millis/100)/10d);
+            Point textLocation =  Perspective.getCanvasTextLocation(client, graphics, portal.getLocalLocation(), timeRemainingText, 100);
+            OverlayUtil.renderTextLocation(graphics, textLocation, timeRemainingText, Color.WHITE);
+        }
     }
 
     private void highlightEssencePiles(Graphics2D graphics){
@@ -94,7 +108,7 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
             if(hull == null) continue;
 
             GuardianInfo info = GUARDIAN_INFO.get(guardian.getId());
-            Color color = info.isCatalytic ? RED : GREEN;
+            Color color = info.isCatalytic ? config.catalyticGuardianColor() : config.elementalGuardianColor();
             graphics.setColor(color);
 
             modelOutlineRenderer.drawOutline(guardian, 2, color, 2);
@@ -104,7 +118,7 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
             OverlayUtil.renderImageLocation(client, graphics, guardian.getLocalLocation(), img, imageOffset);
             if(info.spawnTime.isPresent()) {
                 Point imgLocation = Perspective.getCanvasImageLocation(client, guardian.getLocalLocation(), img, imageOffset);
-                long millis = ChronoUnit.MILLIS.between(Instant.now(), info.spawnTime.get().plusMillis((long)Math.floor(33 * .6 * 1000)));
+                long millis = ChronoUnit.MILLIS.between(Instant.now(), info.spawnTime.get().plusMillis((long)Math.floor(GUARDIAN_TICK_COUNT * 600)));
                 String timeRemainingText = ""+(Math.round(millis/100)/10d);
                 Rectangle2D strBounds = graphics.getFontMetrics().getStringBounds(timeRemainingText, graphics);
                 Point textLocation =  Perspective.getCanvasTextLocation(client, graphics, guardian.getLocalLocation(), timeRemainingText, 565);
@@ -114,14 +128,22 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
         }
     }
 
-    private void highlightGreatGuardian(Graphics2D graphics){
+    private void highlightGreatGuardian(Graphics2D graphics) {
+        if(!config.outlineGreatGuardian()){
+            return;
+        }
+
         NPC greatGuardian = plugin.getGreatGuardian();
         if(plugin.isOutlineGreatGuardian() && greatGuardian != null){
             modelOutlineRenderer.drawOutline(greatGuardian, 2, Color.GREEN, 2);
         }
     }
 
-    private void highlightUnchargedCellTable(Graphics2D graphics){
+    private void highlightUnchargedCellTable(Graphics2D graphics) {
+        if(!config.outlineCellTable()){
+            return;
+        }
+
         GameObject table = plugin.getUnchargedCellTable();
         if(plugin.isOutlineUnchargedCellTable() && table != null){
             modelOutlineRenderer.drawOutline(table, 2, GREEN, 2);

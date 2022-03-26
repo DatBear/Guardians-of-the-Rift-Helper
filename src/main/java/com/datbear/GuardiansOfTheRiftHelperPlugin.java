@@ -4,23 +4,27 @@ import com.google.common.collect.ImmutableSet;
 
 import javax.inject.Inject;
 
+import com.google.inject.Provides;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.*;
 import net.runelite.api.widgets.Widget;
+import net.runelite.client.Notifier;
+import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
-import org.pushingpixels.substance.internal.utils.WidgetUtilities;
 
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @PluginDescriptor(
@@ -33,8 +37,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	@Inject
 	private Client client;
 
-//	@Inject
-//	private GuardiansOfTheRiftHelperConfig config;
+	@Inject
+	private GuardiansOfTheRiftHelperConfig config;
 
 	@Inject
 	private OverlayManager overlayManager;
@@ -42,7 +46,11 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	@Inject
 	private GuardiansOfTheRiftHelperOverlay overlay;
 
-	private boolean isInMinigame;
+	@Inject
+	private GuardiansOfTheRiftHelperPanel panel;
+
+	@Inject
+	private Notifier notifier;
 
 	private static final int MINIGAME_MAIN_REGION = 14484;
 
@@ -65,9 +73,14 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private static final int CATALYTIC_RUNE_WIDGET_ID = 48889878;
 	private static final int ELEMENTAL_RUNE_WIDGET_ID = 48889875;
 	private static final int GUARDIAN_COUNT_WIDGET_ID = 48889885;
+	private static final int PORTAL_WIDGET_ID = 48889883;
 
-	private static final int ELEMENTAL_RUNE_INACTIVE_SPRITE = 4370;
-	private static final int CATALYTIC_RUNE_INACTIVE_SPRITE = 4369;
+	private static final int PORTAL_ID = 43729;
+
+	private static final int GET_REWARD_ANIMATION = 9353;
+
+	private static final String REWARD_POINT_REGEX = "Elemental attunement level:[^>]+>(\\d+).*Catalytic attunement level:[^>]+>(\\d+)";
+	private static final Pattern REWARD_POINT_PATTERN = Pattern.compile(REWARD_POINT_REGEX);
 
 	@Getter(AccessLevel.PACKAGE)
 	private final Set<GameObject> guardians = new HashSet<>();
@@ -81,7 +94,11 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private GameObject catalyticEssencePile;
 	@Getter(AccessLevel.PACKAGE)
 	private GameObject elementalEssencePile;
+	@Getter(AccessLevel.PACKAGE)
+	private GameObject portal;
 
+	@Getter(AccessLevel.PACKAGE)
+	private boolean isInMinigame;
 	@Getter(AccessLevel.PACKAGE)
 	private boolean isInMainRegion;
 	@Getter(AccessLevel.PACKAGE)
@@ -91,6 +108,19 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	@Getter(AccessLevel.PACKAGE)
 	private boolean shouldMakeGuardian = false;
 
+	@Getter(AccessLevel.PACKAGE)
+	private int elementalRewardPoints;
+	@Getter(AccessLevel.PACKAGE)
+	private int catalyticRewardPoints;
+
+	@Getter(AccessLevel.PACKAGE)
+	private Optional<Instant> portalSpawnTime = Optional.empty();
+	@Getter(AccessLevel.PACKAGE)
+	private Optional<Instant> lastPortalDespawnTime = Optional.empty();
+	@Getter(AccessLevel.PACKAGE)
+	private Optional<Instant> nextGameStart = Optional.empty();
+
+	private String portalLocation = null;
 	private int lastElementalRuneSprite;
 	private int lastCatalyticRuneSprite;
 	private boolean areGuardiansNeeded = false;
@@ -104,7 +134,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		}
 
 		Widget elementalRuneWidget = client.getWidget(ELEMENTAL_RUNE_WIDGET_ID);
-		return elementalRuneWidget != null && !elementalRuneWidget.isHidden();
+		return elementalRuneWidget != null;
 	}
 
 	private boolean checkInMainRegion(){
@@ -116,12 +146,14 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	protected void startUp()
 	{
 		overlayManager.add(overlay);
+		overlayManager.add(panel);
 		isInMinigame = true;
 	}
 
 	@Override
 	protected void shutDown() {
 		overlayManager.remove(overlay);
+		overlayManager.remove(panel);
 		reset();
 	}
 
@@ -132,6 +164,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		{
 			return;
 		}
+
+		if(!isInMinigame) return;
 
 		Item[] items = event.getItemContainer().getItems();
 		if(Arrays.stream(items).anyMatch(x -> x.getId() == ELEMENTAL_GUARDIAN_STONE_ID || x.getId() == CATALYTIC_GUARDIAN_STONE_ID)){
@@ -175,12 +209,40 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		Widget elementalRuneWidget = client.getWidget(ELEMENTAL_RUNE_WIDGET_ID);
 		Widget catalyticRuneWidget = client.getWidget(CATALYTIC_RUNE_WIDGET_ID);
 		Widget guardianCountWidget = client.getWidget(GUARDIAN_COUNT_WIDGET_ID);
+		Widget portalWidget = client.getWidget(PORTAL_WIDGET_ID);
 
-		if(elementalRuneWidget != null && !elementalRuneWidget.isHidden()) {
-			int spriteId = elementalRuneWidget.getSpriteId();
-			if(spriteId != lastElementalRuneSprite) {
-				if(lastElementalRuneSprite > 0) {
-					Optional<GuardianInfo> lastGuardian = GuardianInfo.ALL.stream().filter(g -> g.spriteId == lastElementalRuneSprite).findFirst();
+		lastElementalRuneSprite = parseRuneWidget(elementalRuneWidget, lastElementalRuneSprite);
+		lastCatalyticRuneSprite = parseRuneWidget(catalyticRuneWidget, lastCatalyticRuneSprite);
+
+		if(guardianCountWidget != null) {
+			String text = guardianCountWidget.getText();
+			areGuardiansNeeded = text != null && !text.contains("10/10");
+		}
+
+		if(portalWidget != null && !portalWidget.isHidden()){
+			if(!portalSpawnTime.isPresent() && lastPortalDespawnTime.isPresent()) {
+				lastPortalDespawnTime = Optional.empty();
+				if(config.notifyPortalSpawn()){
+					notifier.notify("A portal has spawned in the " + portalWidget.getText() + ".");
+				}
+			}
+			portalLocation = portalWidget.getText();
+			portalSpawnTime = portalSpawnTime.isPresent() ? portalSpawnTime : Optional.of(Instant.now());
+		} else if(elementalRuneWidget != null && !elementalRuneWidget.isHidden()) {
+			if(portalSpawnTime.isPresent()){
+				lastPortalDespawnTime = Optional.of(Instant.now());
+			}
+			portalLocation = null;
+			portalSpawnTime = Optional.empty();
+		}
+	}
+
+	int parseRuneWidget(Widget runeWidget, int lastSpriteId){
+		if(runeWidget != null) {
+			int spriteId = runeWidget.getSpriteId();
+			if(spriteId != lastSpriteId) {
+				if(lastSpriteId > 0) {
+					Optional<GuardianInfo> lastGuardian = GuardianInfo.ALL.stream().filter(g -> g.spriteId == lastSpriteId).findFirst();
 					if(lastGuardian.isPresent()) {
 						lastGuardian.get().despawn();
 					}
@@ -188,37 +250,13 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 
 				Optional<GuardianInfo> currentGuardian = GuardianInfo.ALL.stream().filter(g -> g.spriteId == spriteId).findFirst();
 				if(currentGuardian.isPresent()) {
-					log.info("updating elemental rune to: " + currentGuardian.get().spriteId + " " + Instant.now().toString());
 					currentGuardian.get().spawn();
 				}
 			}
 
-			lastElementalRuneSprite = spriteId;
+			return spriteId;
 		}
-
-		if(catalyticRuneWidget != null && !catalyticRuneWidget.isHidden()){
-			int spriteId = catalyticRuneWidget.getSpriteId();
-			if(spriteId != lastCatalyticRuneSprite){
-				if(lastCatalyticRuneSprite > 0){
-					Optional<GuardianInfo> lastGuardian = GuardianInfo.ALL.stream().filter(g -> g.spriteId == lastCatalyticRuneSprite).findFirst();
-					if(lastGuardian.isPresent()) {
-						lastGuardian.get().despawn();
-					}
-				}
-
-				Optional<GuardianInfo> currentGuardian = GuardianInfo.ALL.stream().filter(g -> g.spriteId == spriteId).findFirst();
-				if(currentGuardian.isPresent()) {
-					log.info("updating catalytic rune to: " + currentGuardian.get().spriteId + " " + Instant.now().toString());
-					currentGuardian.get().spawn();
-				}
-			}
-
-			lastCatalyticRuneSprite = spriteId;
-		}
-
-		if(guardianCountWidget != null && !guardianCountWidget.isHidden()) {
-			areGuardiansNeeded = !guardianCountWidget.getText().equals("10/10");
-		}
+		return lastSpriteId;
 	}
 
 	@Subscribe
@@ -241,6 +279,11 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 
 		if(gameObject.getId() == CATALYTIC_ESSENCE_PILE_ID){
 			catalyticEssencePile = gameObject;
+		}
+
+		if(gameObject.getId() == PORTAL_ID){
+			log.info("portal gameobject spawned");
+			portal = gameObject;
 		}
 	}
 
@@ -268,7 +311,36 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		}
 	}
 
-	private void reset(){
+	@Subscribe
+	public void onChatMessage(ChatMessage chatMessage)
+	{
+		if(!isInMainRegion) return;
+		if(chatMessage.getType() != ChatMessageType.SPAM && chatMessage.getType() != ChatMessageType.GAMEMESSAGE) return;
+
+		String msg = chatMessage.getMessage();
+		if(msg.contains("The rift becomes active!")) {
+			lastPortalDespawnTime = Optional.of(Instant.now());
+			nextGameStart = Optional.empty();
+		} else if(msg.contains("The rift will become active in 30 seconds.")) {
+			nextGameStart = Optional.of(Instant.now().plusSeconds(30));
+		} else if(msg.contains("The rift will become active in 10 seconds.")) {
+			nextGameStart = Optional.of(Instant.now().plusSeconds(10));
+		} else if(msg.contains("The rift will become active in 5 seconds.")) {
+			nextGameStart = Optional.of(Instant.now().plusSeconds(5));
+		} else if(msg.contains("The Portal Guardians will keep their rifts open for another 30 seconds.")){
+			nextGameStart = Optional.of(Instant.now().plusSeconds(60));
+		}
+
+		Matcher rewardPointMatcher = REWARD_POINT_PATTERN.matcher(msg);
+		if(rewardPointMatcher.find()) {
+			elementalRewardPoints = Integer.parseInt(rewardPointMatcher.group(1));
+			catalyticRewardPoints = Integer.parseInt(rewardPointMatcher.group(2));
+			log.info("elemental points: " + elementalRewardPoints + " catalytic points: " + catalyticRewardPoints);
+		}
+		log.info(msg);
+	}
+
+	private void reset() {
 		guardians.clear();
 		activeGuardians.clear();
 		unchargedCellTable = null;
@@ -277,9 +349,9 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		elementalEssencePile = null;
 	}
 
-//	@Provides
-//	GuardiansOfTheRiftHelperConfig provideConfig(ConfigManager configManager)
-//	{
-//		return configManager.getConfig(GuardiansOfTheRiftHelperConfig.class);
-//	}
+	@Provides
+	GuardiansOfTheRiftHelperConfig provideConfig(ConfigManager configManager)
+	{
+		return configManager.getConfig(GuardiansOfTheRiftHelperConfig.class);
+	}
 }
