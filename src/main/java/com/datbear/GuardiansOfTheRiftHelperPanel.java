@@ -45,14 +45,16 @@ public class GuardiansOfTheRiftHelperPanel extends OverlayPanel {
                     .left("Time to start:")
                     .right(""+timeToStart)
                     .build());
+        } else{
+            Optional<Instant> despawn = plugin.getLastPortalDespawnTime();
+            int timeSincePortal = despawn.isPresent() ? ((int)(ChronoUnit.SECONDS.between(despawn.get(), Instant.now()))) : 0;
+            panelComponent.getChildren().add(LineComponent.builder()
+                    .left("Time since portal:")
+                    .right(""+timeSincePortal)
+                    .build());
         }
 
-        Optional<Instant> despawn = plugin.getLastPortalDespawnTime();
-        int timeSincePortal = despawn.isPresent() ? ((int)(ChronoUnit.SECONDS.between(despawn.get(), Instant.now()))) : 0;
-        panelComponent.getChildren().add(LineComponent.builder()
-                        .left("Time since portal:")
-                        .right(""+timeSincePortal)
-                .build());
+
 
         panelComponent.getChildren().add(LineComponent.builder()
                         .left("Reward points:")

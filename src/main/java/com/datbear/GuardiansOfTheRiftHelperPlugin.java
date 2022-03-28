@@ -19,12 +19,11 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @PluginDescriptor(
@@ -55,6 +54,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private static final int MINIGAME_MAIN_REGION = 14484;
 
 	private static final Set<Integer> GUARDIAN_IDS = ImmutableSet.of(43705, 43701, 43710, 43702, 43703, 43711, 43704, 43708, 43712, 43707, 43706, 43709, 43702);
+	private static final Set<Integer> TALISMAN_IDS = GuardianInfo.ALL.stream().mapToInt(x -> x.talismanId).boxed().collect(Collectors.toSet());
 	private static final int GREAT_GUARDIAN_ID = 11403;
 
 	private static final int CATALYTIC_GUARDIAN_STONE_ID = 26880;
@@ -77,8 +77,6 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 
 	private static final int PORTAL_ID = 43729;
 
-	private static final int GET_REWARD_ANIMATION = 9353;
-
 	private static final String REWARD_POINT_REGEX = "Elemental attunement level:[^>]+>(\\d+).*Catalytic attunement level:[^>]+>(\\d+)";
 	private static final Pattern REWARD_POINT_PATTERN = Pattern.compile(REWARD_POINT_REGEX);
 
@@ -86,6 +84,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private final Set<GameObject> guardians = new HashSet<>();
 	@Getter(AccessLevel.PACKAGE)
 	private final Set<GameObject> activeGuardians = new HashSet<>();
+	@Getter(AccessLevel.PACKAGE)
+	private final Set<Integer> inventoryTalismans = new HashSet<>();
 	@Getter(AccessLevel.PACKAGE)
 	private NPC greatGuardian;
 	@Getter(AccessLevel.PACKAGE)
@@ -119,8 +119,11 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private Optional<Instant> lastPortalDespawnTime = Optional.empty();
 	@Getter(AccessLevel.PACKAGE)
 	private Optional<Instant> nextGameStart = Optional.empty();
+	@Getter(AccessLevel.PACKAGE)
+	private int lastRewardUsage;
 
-	private String portalLocation = null;
+
+	private String portalLocation;
 	private int lastElementalRuneSprite;
 	private int lastCatalyticRuneSprite;
 	private boolean areGuardiansNeeded = false;
@@ -160,32 +163,21 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	@Subscribe
 	public void onItemContainerChanged(ItemContainerChanged event)
 	{
-		if (event.getItemContainer() != client.getItemContainer(InventoryID.INVENTORY))
+		if (!isInMainRegion || event.getItemContainer() != client.getItemContainer(InventoryID.INVENTORY))
 		{
 			return;
 		}
 
-		if(!isInMinigame) return;
-
 		Item[] items = event.getItemContainer().getItems();
-		if(Arrays.stream(items).anyMatch(x -> x.getId() == ELEMENTAL_GUARDIAN_STONE_ID || x.getId() == CATALYTIC_GUARDIAN_STONE_ID)){
-			outlineGreatGuardian = true;
-		} else {
-			outlineGreatGuardian = false;
-		}
+		outlineGreatGuardian = Arrays.stream(items).anyMatch(x -> x.getId() == ELEMENTAL_GUARDIAN_STONE_ID || x.getId() == CATALYTIC_GUARDIAN_STONE_ID);
+		outlineUnchargedCellTable = Arrays.stream(items).noneMatch(x -> x.getId() == UNCHARGED_CELL_ITEM_ID);
+		shouldMakeGuardian = Arrays.stream(items).anyMatch(x -> x.getId() == CHISEL_ID) && Arrays.stream(items).anyMatch(x -> x.getId() == OVERCHARGED_CELL_ID) && areGuardiansNeeded;
 
-		if(Arrays.stream(items).noneMatch(x -> x.getId() == UNCHARGED_CELL_ITEM_ID)) {
-			outlineUnchargedCellTable = true;
-		} else {
-			outlineUnchargedCellTable = false;
+		List<Integer> invTalismans = Arrays.stream(items).mapToInt(x -> x.getId()).filter(x -> TALISMAN_IDS.contains(x)).boxed().collect(Collectors.toList());
+		if(invTalismans.stream().count() != inventoryTalismans.stream().count()){
+			inventoryTalismans.clear();
+			inventoryTalismans.addAll(invTalismans);
 		}
-
-		if(Arrays.stream(items).anyMatch(x -> x.getId() == CHISEL_ID) && Arrays.stream(items).anyMatch(x -> x.getId() == OVERCHARGED_CELL_ID) && areGuardiansNeeded) {
-			shouldMakeGuardian = true;
-		} else {
-			shouldMakeGuardian = false;
-		}
-
 	}
 
 	@Subscribe
@@ -282,7 +274,6 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		}
 
 		if(gameObject.getId() == PORTAL_ID){
-			log.info("portal gameobject spawned");
 			portal = gameObject;
 		}
 	}
@@ -306,7 +297,6 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		}
 		else if (event.getGameState() == GameState.LOGIN_SCREEN)
 		{
-			// Prevent code from running while logged out.
 			isInMinigame = false;
 		}
 	}
@@ -329,15 +319,17 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 			nextGameStart = Optional.of(Instant.now().plusSeconds(5));
 		} else if(msg.contains("The Portal Guardians will keep their rifts open for another 30 seconds.")){
 			nextGameStart = Optional.of(Instant.now().plusSeconds(60));
+		} else if(msg.contains("You found some loot:")){
+			elementalRewardPoints--;
+			catalyticRewardPoints--;
 		}
 
 		Matcher rewardPointMatcher = REWARD_POINT_PATTERN.matcher(msg);
 		if(rewardPointMatcher.find()) {
 			elementalRewardPoints = Integer.parseInt(rewardPointMatcher.group(1));
 			catalyticRewardPoints = Integer.parseInt(rewardPointMatcher.group(2));
-			log.info("elemental points: " + elementalRewardPoints + " catalytic points: " + catalyticRewardPoints);
 		}
-		log.info(msg);
+		//log.info(msg);
 	}
 
 	private void reset() {
