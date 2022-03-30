@@ -70,9 +70,9 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 
 	private static final int GUARDIAN_ACTIVE_ANIM = 9363;
 
-	private static final int CATALYTIC_RUNE_WIDGET_ID = 48889878;
-	private static final int ELEMENTAL_RUNE_WIDGET_ID = 48889875;
-	private static final int GUARDIAN_COUNT_WIDGET_ID = 48889885;
+	private static final int CATALYTIC_RUNE_WIDGET_ID = 48889876;
+	private static final int ELEMENTAL_RUNE_WIDGET_ID = 48889879;
+	private static final int GUARDIAN_COUNT_WIDGET_ID = 48889886;
 	private static final int PORTAL_WIDGET_ID = 48889883;
 
 	private static final int PORTAL_ID = 43729;

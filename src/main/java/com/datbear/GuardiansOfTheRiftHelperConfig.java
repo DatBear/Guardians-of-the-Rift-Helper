@@ -12,7 +12,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
     @ConfigItem(
             keyName = "showOverlay",
             name = "Show Overlay",
-            description = "Toggles the status overlay"
+            description = "Toggles the status overlay."
     )
     default boolean showOverlay()
     {
@@ -22,7 +22,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
     @ConfigItem(
             keyName = "portalSpawn",
             name = "Notify on portal spawn",
-            description = "Notifies you when a portal spawns"
+            description = "Notifies you when a portal spawns."
     )
     default boolean notifyPortalSpawn()
     {
@@ -32,7 +32,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
     @ConfigItem(
             keyName = "outlineCellTable",
             name = "Outline cell table",
-            description = "Outlines the Cell table when you have no cells remaining"
+            description = "Outlines the Cell table when you have no cells remaining."
     )
     default boolean outlineCellTable()
     {
@@ -53,8 +53,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
 
     @ConfigItem(
             keyName = "elementalGuardianColor",
-            name = "Elemental Outline",
-            description = "Color of the outline on the active elemental guardian"
+            name = "Elemental outline",
+            description = "Color of the outline on the active elemental guardian."
     )
     default Color elementalGuardianColor()
     {
@@ -63,11 +63,67 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
 
     @ConfigItem(
             keyName = "catalyticGuardianColor",
-            name = "Catalytic Outline",
-            description = "Color of the outline on the active catalytic guardian"
+            name = "Catalytic outline",
+            description = "Color of the outline on the active catalytic guardian."
     )
     default Color catalyticGuardianColor()
     {
         return Color.RED;
     }
+
+
+    @ConfigItem(
+            keyName = "outlineGuardiansByTier",
+            name = "Color guardians by cell tier",
+            description = "Outlines active portal guardians with colors based on their Cell charge tiers instead of Elemental vs Catalytic.",
+            position = 2
+    )
+    default boolean colorGuardiansByTier() { return false; }
+
+
+    @ConfigItem(
+            keyName = "weakGuardianColor",
+            name = "Weak outline",
+            description = "Color of the outline on an active weak guardian.",
+            position = 3
+    )
+    default Color weakGuardianColor()
+    {
+        return Color.WHITE;
+    }
+
+    @ConfigItem(
+            keyName = "mediumGuardianColor",
+            name = "Medium outline",
+            description = "Color of the outline on an active medium guardian.",
+            position = 4
+    )
+    default Color mediumGuardianColor()
+    {
+        return Color.BLUE;
+    }
+
+    @ConfigItem(
+            keyName = "strongGuardianColor",
+            name = "Strong outline",
+            description = "Color of the outline on an active strong guardian.",
+            position = 5
+    )
+    default Color strongGuardianColor()
+    {
+        return Color.GREEN;
+    }
+
+    @ConfigItem(
+            keyName = "overchargedGuardianColor",
+            name = "Overcharged outline",
+            description = "Color of the outline on an active overcharged guardian.",
+            position = 6
+    )
+    default Color overchargedGuardianColor()
+    {
+        return Color.RED;
+    }
+
+
 }
