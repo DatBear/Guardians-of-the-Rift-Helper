@@ -23,7 +23,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @PluginDescriptor(
@@ -127,6 +126,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private int lastElementalRuneSprite;
 	private int lastCatalyticRuneSprite;
 	private boolean areGuardiansNeeded = false;
+	private int entryBarrierClickCooldown = 0;
 
 	private boolean checkInMinigame() {
 		GameState gameState = client.getGameState();
@@ -185,6 +185,9 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	{
 		isInMinigame = checkInMinigame();
 		isInMainRegion = checkInMainRegion();
+		if (entryBarrierClickCooldown > 0) {
+			entryBarrierClickCooldown--;
+		}
 
 		activeGuardians.removeIf(ag -> {
 			Animation anim = ((DynamicObject)ag.getRenderable()).getAnimation();
@@ -345,5 +348,23 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	GuardiansOfTheRiftHelperConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(GuardiansOfTheRiftHelperConfig.class);
+	}
+
+	@Subscribe
+	public void onMenuOptionClicked(MenuOptionClicked event)
+	{
+		// Only allow one click on the entry barrier for every 3 game ticks
+		if (event.getId() == 43700)
+		{
+			if (entryBarrierClickCooldown > 0)
+			{
+				log.debug("Consuming duplicate click");
+				event.consume();
+			}
+			else
+			{
+				entryBarrierClickCooldown = 3;
+			}
+		}
 	}
 }
