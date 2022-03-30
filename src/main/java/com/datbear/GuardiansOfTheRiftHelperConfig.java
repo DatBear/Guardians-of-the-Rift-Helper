@@ -50,6 +50,15 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
     }
 
 
+    @ConfigItem(
+            keyName = "quickPassCooldown",
+            name = "Add cooldown to Quick-Pass",
+            description = "Adds a 3 tick delay to the Quick-Pass menu option so you don't enter/leave by spam clicking the gate with Menu Entry Swapper's quick-pass option enabled."
+    )
+    default boolean quickPassCooldown()
+    {
+        return true;
+    }
 
     @ConfigItem(
             keyName = "elementalGuardianColor",

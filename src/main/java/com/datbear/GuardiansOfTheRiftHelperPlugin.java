@@ -353,12 +353,13 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event)
 	{
-		// Only allow one click on the entry barrier for every 3 game ticks
-		if (event.getId() == 43700)
+		if(!config.quickPassCooldown()) return;
+		
+		// Only allow one click on the entry barrier's quick-pass option for every 3 game ticks
+		if (event.getId() == 43700 && event.getMenuAction().getId() == 5)
 		{
 			if (entryBarrierClickCooldown > 0)
 			{
-				log.debug("Consuming duplicate click");
 				event.consume();
 			}
 			else
