@@ -72,7 +72,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private static final int CATALYTIC_RUNE_WIDGET_ID = 48889876;
 	private static final int ELEMENTAL_RUNE_WIDGET_ID = 48889879;
 	private static final int GUARDIAN_COUNT_WIDGET_ID = 48889886;
-	private static final int PORTAL_WIDGET_ID = 48889883;
+	private static final int PORTAL_WIDGET_ID = 48889884;
 
 	private static final int PORTAL_ID = 43729;
 
@@ -123,6 +123,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 
 
 	private String portalLocation;
+	private HashMap dirMap;
 	private int lastElementalRuneSprite;
 	private int lastCatalyticRuneSprite;
 	private boolean areGuardiansNeeded = false;
@@ -215,13 +216,22 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		}
 
 		if(portalWidget != null && !portalWidget.isHidden()){
+      portalLocation = portalWidget.getText().split("\\s+")[0];
+      dirMap = new HashMap<String, String>();
+      dirMap.put("N", "north");
+      dirMap.put("E", "east");
+      dirMap.put("S", "south");
+      dirMap.put("W", "west");
+      dirMap.put("NE", "north east");
+      dirMap.put("NW", "north west");
+      dirMap.put("SE", "south east");
+      dirMap.put("SW", "south west");
 			if(!portalSpawnTime.isPresent() && lastPortalDespawnTime.isPresent()) {
 				lastPortalDespawnTime = Optional.empty();
 				if(config.notifyPortalSpawn()){
-					notifier.notify("A portal has spawned in the " + portalWidget.getText() + ".");
+					notifier.notify("A portal has opened to the " + dirMap.get(portalLocation) + "!");
 				}
 			}
-			portalLocation = portalWidget.getText();
 			portalSpawnTime = portalSpawnTime.isPresent() ? portalSpawnTime : Optional.of(Instant.now());
 		} else if(elementalRuneWidget != null && !elementalRuneWidget.isHidden()) {
 			if(portalSpawnTime.isPresent()){
@@ -354,7 +364,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	public void onMenuOptionClicked(MenuOptionClicked event)
 	{
 		if(!config.quickPassCooldown()) return;
-		
+
 		// Only allow one click on the entry barrier's quick-pass option for every 3 game ticks
 		if (event.getId() == 43700 && event.getMenuAction().getId() == 5)
 		{
