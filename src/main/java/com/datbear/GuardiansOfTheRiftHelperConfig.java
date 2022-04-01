@@ -30,6 +30,16 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
     }
 
     @ConfigItem(
+            keyName = "muteApprentices",
+            name = "Mute game help messages",
+            description = "Mutes the over head messages of the apprentices giving game advice."
+    )
+    default boolean muteApprentices()
+    {
+        return true;
+    }
+
+    @ConfigItem(
             keyName = "outlineCellTable",
             name = "Outline cell table",
             description = "Outlines the Cell table when you have no cells remaining."
@@ -133,6 +143,5 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
     {
         return Color.RED;
     }
-
 
 }

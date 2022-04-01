@@ -73,17 +73,11 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private static final int ELEMENTAL_RUNE_WIDGET_ID = 48889879;
 	private static final int GUARDIAN_COUNT_WIDGET_ID = 48889886;
 	private static final int PORTAL_WIDGET_ID = 48889883;
-	private static final int PORTAL_TEXT_WIDGET_ID = 48889884;
 
 	private static final int PORTAL_ID = 43729;
 
 	private static final String REWARD_POINT_REGEX = "Elemental attunement level:[^>]+>(\\d+).*Catalytic attunement level:[^>]+>(\\d+)";
 	private static final Pattern REWARD_POINT_PATTERN = Pattern.compile(REWARD_POINT_REGEX);
-	private static final Pattern NORTH_PORTAL_PATTERN = Pattern.compile("N - \\d:\\d\\d");
-	private static final Pattern EAST_PORTAL_PATTERN = Pattern.compile("E - \\d:\\d\\d");
-	private static final Pattern SOUTH_PORTAL_PATTERN = Pattern.compile("S - \\d:\\d\\d");
-	private static final Pattern SOUTH_EAST_PORTAL_PATTERN = Pattern.compile("SE - \\d:\\d\\d");
-	private static final Pattern SOUTH_WEST_PORTAL_PATTERN = Pattern.compile("SW - \\d:\\d\\d");
 
 	@Getter(AccessLevel.PACKAGE)
 	private final Set<GameObject> guardians = new HashSet<>();
@@ -211,7 +205,6 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		Widget catalyticRuneWidget = client.getWidget(CATALYTIC_RUNE_WIDGET_ID);
 		Widget guardianCountWidget = client.getWidget(GUARDIAN_COUNT_WIDGET_ID);
 		Widget portalWidget = client.getWidget(PORTAL_WIDGET_ID);
-		Widget portalTextWidget = client.getWidget(PORTAL_TEXT_WIDGET_ID);
 
 		lastElementalRuneSprite = parseRuneWidget(elementalRuneWidget, lastElementalRuneSprite);
 		lastCatalyticRuneSprite = parseRuneWidget(catalyticRuneWidget, lastCatalyticRuneSprite);
@@ -225,29 +218,10 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 			if(!portalSpawnTime.isPresent() && lastPortalDespawnTime.isPresent()) {
 				lastPortalDespawnTime = Optional.empty();
 				if(config.notifyPortalSpawn()){
-					String portalText = portalTextWidget.getText();
-
-					Matcher northPortalMatcher = NORTH_PORTAL_PATTERN.matcher(portalText);
-					Matcher eastPortalMatcher = EAST_PORTAL_PATTERN.matcher(portalText);
-					Matcher southPortalMatcher = SOUTH_PORTAL_PATTERN.matcher(portalText);
-					Matcher southEastPortalMatcher = SOUTH_EAST_PORTAL_PATTERN.matcher(portalText);
-					Matcher southWestPortalMatcher = SOUTH_WEST_PORTAL_PATTERN.matcher(portalText);
-
-					if (northPortalMatcher.matches()) {
-						portalLocation = "North";
-					} else if (eastPortalMatcher.matches()) {
-						portalLocation = "East";
-					} else if (southPortalMatcher.matches()) {
-						portalLocation = "South";
-					} else if (southEastPortalMatcher.matches()) {
-						portalLocation = "South East";
-					} else if (southWestPortalMatcher.matches()) {
-						portalLocation = "South West";
-					}
-
-					notifier.notify("A portal has spawned in the " + portalLocation + ".");
+					notifier.notify("A portal has spawned in the " + portalWidget.getText() + ".");
 				}
 			}
+			portalLocation = portalWidget.getText();
 			portalSpawnTime = portalSpawnTime.isPresent() ? portalSpawnTime : Optional.of(Instant.now());
 		} else if(elementalRuneWidget != null && !elementalRuneWidget.isHidden()) {
 			if(portalSpawnTime.isPresent()){
@@ -380,7 +354,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	public void onMenuOptionClicked(MenuOptionClicked event)
 	{
 		if(!config.quickPassCooldown()) return;
-
+		
 		// Only allow one click on the entry barrier's quick-pass option for every 3 game ticks
 		if (event.getId() == 43700 && event.getMenuAction().getId() == 5)
 		{
@@ -392,6 +366,19 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 			{
 				entryBarrierClickCooldown = 3;
 			}
+		}
+	}
+
+	@Subscribe
+	public void onOverheadTextChanged(OverheadTextChanged event)
+	{
+		if (!("Apprentice Tamara".equals(event.getActor().getName()) || "Apprentice Cordelia".equals(event.getActor().getName())))
+		{
+			return;
+		}
+		if (config.muteApprentices())
+		{
+			event.getActor().setOverheadText(" ");
 		}
 	}
 }
