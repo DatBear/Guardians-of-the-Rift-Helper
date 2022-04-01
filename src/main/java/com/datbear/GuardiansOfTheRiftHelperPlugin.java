@@ -368,4 +368,17 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 			}
 		}
 	}
+
+	@Subscribe
+	public void onOverheadTextChanged(OverheadTextChanged event)
+	{
+		if (!("Apprentice Tamara".equals(event.getActor().getName()) || "Apprentice Cordelia".equals(event.getActor().getName())))
+		{
+			return;
+		}
+		if (config.muteApprentices())
+		{
+			event.getActor().setOverheadText(" ");
+		}
+	}
 }
