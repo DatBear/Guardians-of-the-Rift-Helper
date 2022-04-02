@@ -12,6 +12,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
+import static java.lang.Math.max;
 import static net.runelite.api.MenuAction.RUNELITE_OVERLAY_CONFIG;
 import static net.runelite.client.ui.overlay.OverlayManager.OPTION_CONFIGURE;
 
@@ -38,23 +39,22 @@ public class GuardiansOfTheRiftHelperPanel extends OverlayPanel {
         }
 
         Optional<Instant> gameStart = plugin.getNextGameStart();
+        Optional<Instant> despawn = plugin.getLastPortalDespawnTime();
+
 
         if(gameStart.isPresent()){
             int timeToStart = ((int)ChronoUnit.SECONDS.between(Instant.now(), gameStart.get()));
             panelComponent.getChildren().add(LineComponent.builder()
                     .left("Time to start:")
-                    .right(""+timeToStart)
+                    .right("" + max(timeToStart, 0))
                     .build());
-        } else{
-            Optional<Instant> despawn = plugin.getLastPortalDespawnTime();
-            int timeSincePortal = despawn.isPresent() ? ((int)(ChronoUnit.SECONDS.between(despawn.get(), Instant.now()))) : 0;
+        } else if (despawn.isPresent()) {
+            int timeSincePortal = (int)(ChronoUnit.SECONDS.between(despawn.get(), Instant.now()));
             panelComponent.getChildren().add(LineComponent.builder()
                     .left("Time since portal:")
-                    .right(""+timeSincePortal)
+                    .right("" + max(timeSincePortal,0))
                     .build());
-        }
-
-
+            }
 
         panelComponent.getChildren().add(LineComponent.builder()
                         .left("Reward points:")

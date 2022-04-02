@@ -101,6 +101,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	@Getter(AccessLevel.PACKAGE)
 	private boolean isInMainRegion;
 	@Getter(AccessLevel.PACKAGE)
+	private boolean isInLobby;
+	@Getter(AccessLevel.PACKAGE)
 	private boolean outlineGreatGuardian = false;
 	@Getter(AccessLevel.PACKAGE)
 	private boolean outlineUnchargedCellTable = false;
@@ -123,7 +125,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 
 
 	private String portalLocation;
-	private HashMap dirMap;
+	private HashMap<String, String> dirMap;
 	private int lastElementalRuneSprite;
 	private int lastCatalyticRuneSprite;
 	private boolean areGuardiansNeeded = false;
@@ -144,6 +146,11 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private boolean checkInMainRegion(){
 		int[] currentMapRegions = client.getMapRegions();
 		return Arrays.stream(currentMapRegions).anyMatch(x -> x == MINIGAME_MAIN_REGION);
+	}
+
+	public boolean checkInLobby(){
+		Player player = client.getLocalPlayer();
+		return player != null && checkInMainRegion() && player.getWorldLocation().getRegionY() < 12;
 	}
 
 	@Override
@@ -186,6 +193,12 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	{
 		isInMinigame = checkInMinigame();
 		isInMainRegion = checkInMainRegion();
+		isInLobby = checkInLobby();
+
+		if (isInLobby) {
+			lastPortalDespawnTime = Optional.empty();
+			portalSpawnTime = Optional.empty();
+		}
 		if (entryBarrierClickCooldown > 0) {
 			entryBarrierClickCooldown--;
 		}
@@ -216,16 +229,16 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		}
 
 		if(portalWidget != null && !portalWidget.isHidden()){
-      portalLocation = portalWidget.getText().split("\\s+")[0];
-      dirMap = new HashMap<String, String>();
-      dirMap.put("N", "north");
-      dirMap.put("E", "east");
-      dirMap.put("S", "south");
-      dirMap.put("W", "west");
-      dirMap.put("NE", "north east");
-      dirMap.put("NW", "north west");
-      dirMap.put("SE", "south east");
-      dirMap.put("SW", "south west");
+		  portalLocation = portalWidget.getText().split("\\s+")[0];
+		  dirMap = new HashMap<String, String>();
+		  dirMap.put("N", "north");
+		  dirMap.put("E", "east");
+		  dirMap.put("S", "south");
+		  dirMap.put("W", "west");
+		  dirMap.put("NE", "north east");
+		  dirMap.put("NW", "north west");
+		  dirMap.put("SE", "south east");
+		  dirMap.put("SW", "south west");
 			if(!portalSpawnTime.isPresent() && lastPortalDespawnTime.isPresent()) {
 				lastPortalDespawnTime = Optional.empty();
 				if(config.notifyPortalSpawn()){
@@ -311,6 +324,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		else if (event.getGameState() == GameState.LOGIN_SCREEN)
 		{
 			isInMinigame = false;
+			nextGameStart = Optional.empty();
+			lastPortalDespawnTime = Optional.empty();
 		}
 	}
 
@@ -322,15 +337,16 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 
 		String msg = chatMessage.getMessage();
 		if(msg.contains("The rift becomes active!")) {
-			lastPortalDespawnTime = Optional.of(Instant.now());
+			lastPortalDespawnTime = Optional.empty();
 			nextGameStart = Optional.empty();
 		} else if(msg.contains("The rift will become active in 30 seconds.")) {
 			nextGameStart = Optional.of(Instant.now().plusSeconds(30));
 		} else if(msg.contains("The rift will become active in 10 seconds.")) {
-			nextGameStart = Optional.of(Instant.now().plusSeconds(10));
+			nextGameStart = Optional.of(Instant.now().plusMillis(9600));
 		} else if(msg.contains("The rift will become active in 5 seconds.")) {
-			nextGameStart = Optional.of(Instant.now().plusSeconds(5));
+			nextGameStart = Optional.of(Instant.now().plusMillis(4800));
 		} else if(msg.contains("The Portal Guardians will keep their rifts open for another 30 seconds.")){
+			lastPortalDespawnTime = Optional.empty();
 			nextGameStart = Optional.of(Instant.now().plusSeconds(60));
 		} else if(msg.contains("You found some loot:")){
 			elementalRewardPoints--;
@@ -366,8 +382,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		if(!config.quickPassCooldown()) return;
 
 		// Only allow one click on the entry barrier's quick-pass option for every 3 game ticks
-		if (event.getId() == 43700 && event.getMenuAction().getId() == 5)
-		{
+		if (event.getId() == 43700 && event.getMenuAction().getId() == 5) {
 			if (entryBarrierClickCooldown > 0)
 			{
 				event.consume();
@@ -376,6 +391,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 			{
 				entryBarrierClickCooldown = 3;
 			}
+
 		}
 	}
 }
