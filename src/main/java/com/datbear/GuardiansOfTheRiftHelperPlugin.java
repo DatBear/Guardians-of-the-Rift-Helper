@@ -85,6 +85,10 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private static final Pattern SOUTH_EAST_PORTAL_PATTERN = Pattern.compile("SE - \\d:\\d\\d");
 	private static final Pattern SOUTH_WEST_PORTAL_PATTERN = Pattern.compile("SW - \\d:\\d\\d");
 
+	private static final int BARRIER_DIALOG_WIDGET_GROUP = 229;
+	private static final int BARRIER_DIALOG_WIDGET_MESSAGE = 1;
+	private static final String BARRIER_DIALOG_FINISHING_UP = "It looks like the adventurers within are just finishing up. You must<br>wait until they are done to join.";
+
 	@Getter(AccessLevel.PACKAGE)
 	private final Set<GameObject> guardians = new HashSet<>();
 	@Getter(AccessLevel.PACKAGE)
@@ -255,6 +259,16 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 			}
 			portalLocation = null;
 			portalSpawnTime = Optional.empty();
+		}
+
+		Widget barrierDialog = client.getWidget(BARRIER_DIALOG_WIDGET_GROUP, BARRIER_DIALOG_WIDGET_MESSAGE);
+		if (barrierDialog != null)
+		{
+			String barrierText = barrierDialog.getText();
+			if (barrierText.equals(BARRIER_DIALOG_FINISHING_UP)) {
+				// Allow one click per tick while the portal is closed
+				entryBarrierClickCooldown = 0;
+			}
 		}
 	}
 
