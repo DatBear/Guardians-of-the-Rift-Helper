@@ -51,6 +51,7 @@ public class GuardiansOfTheRiftHelperPanel extends OverlayPanel {
             panelComponent.getChildren().add(LineComponent.builder()
                     .left("Time since portal:")
                     .right(""+timeSincePortal)
+                    .rightColor(plugin.getTimeSincePortalColor(timeSincePortal))
                     .build());
         }
 

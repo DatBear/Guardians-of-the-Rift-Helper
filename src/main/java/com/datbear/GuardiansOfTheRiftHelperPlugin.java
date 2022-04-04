@@ -18,6 +18,7 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 
+import java.awt.Color;
 import java.time.Instant;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -110,6 +111,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private boolean outlineUnchargedCellTable = false;
 	@Getter(AccessLevel.PACKAGE)
 	private boolean shouldMakeGuardian = false;
+	@Getter(AccessLevel.PACKAGE)
+	private boolean isFirstPortal = false;
 
 	@Getter(AccessLevel.PACKAGE)
 	private int elementalRewardPoints;
@@ -221,6 +224,9 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		if(portalWidget != null && !portalWidget.isHidden()){
 			if(!portalSpawnTime.isPresent() && lastPortalDespawnTime.isPresent()) {
 				lastPortalDespawnTime = Optional.empty();
+				if (isFirstPortal) {
+					isFirstPortal = false;
+				}
 				if(config.notifyPortalSpawn()){
 					notifier.notify("A portal has spawned in the " + portalWidget.getText() + ".");
 				}
@@ -328,6 +334,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		if(msg.contains("The rift becomes active!")) {
 			lastPortalDespawnTime = Optional.of(Instant.now());
 			nextGameStart = Optional.empty();
+			isFirstPortal = true;
 		} else if(msg.contains("The rift will become active in 30 seconds.")) {
 			nextGameStart = Optional.of(Instant.now().plusSeconds(30));
 		} else if(msg.contains("The rift will become active in 10 seconds.")) {
@@ -368,7 +375,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	public void onMenuOptionClicked(MenuOptionClicked event)
 	{
 		if(!config.quickPassCooldown()) return;
-		
+
 		// Only allow one click on the entry barrier's quick-pass option for every 3 game ticks
 		if (event.getId() == 43700 && event.getMenuAction().getId() == 5)
 		{
@@ -395,4 +402,23 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 			event.getActor().setOverheadText(" ");
 		}
 	}
+
+	public Color getTimeSincePortalColor(int timeSincePortal)
+	{
+		if (isFirstPortal)
+		{
+			// first portal takes about 40 more seconds to spawn
+			timeSincePortal -= 40;
+		}
+		if (timeSincePortal >= 108)
+		{
+			return Color.RED;
+		}
+		else if(timeSincePortal >= 85)
+		{
+			return Color.YELLOW;
+		}
+		return Color.GREEN;
+	}
 }
+
