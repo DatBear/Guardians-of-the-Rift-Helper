@@ -30,6 +30,14 @@ public class GuardiansOfTheRiftHelperPanel extends OverlayPanel {
         getMenuEntries().add(new OverlayMenuEntry(RUNELITE_OVERLAY_CONFIG, OPTION_CONFIGURE, "Guardians of the Rift Helper Overlay"));
     }
 
+	private int potentialtPoints(int savedPoints, int currentPoints)
+	{
+		if (currentPoints == 0){
+			return savedPoints;
+		}
+		return savedPoints += currentPoints / 100;
+	}
+
     @Override
     public Dimension render(Graphics2D graphics)
     {
@@ -60,6 +68,19 @@ public class GuardiansOfTheRiftHelperPanel extends OverlayPanel {
                         .left("Reward points:")
                         .right(plugin.getElementalRewardPoints() + "/" + plugin.getCatalyticRewardPoints())
                 .build());
+
+		final int potElementalPoints = potentialtPoints(plugin.getElementalRewardPoints(), plugin.getCurrentElementalRewardPoints());
+		final int potCatalyticPoints = potentialtPoints(plugin.getCatalyticRewardPoints(), plugin.getCurrentCatalyticRewardPoints());
+		final int elementalRemain = plugin.getCurrentElementalRewardPoints() % 100;
+		final int catalyticRemain = plugin.getCurrentCatalyticRewardPoints() % 100;
+		final String potPoints = potElementalPoints+"."+elementalRemain+"/"+potCatalyticPoints+"."+catalyticRemain;
+		final Color hasBalance = potElementalPoints == potCatalyticPoints ? Color.GREEN : Color.RED;
+
+		panelComponent.getChildren().add(LineComponent.builder()
+				.left("Potential:")
+				.rightColor(hasBalance)
+				.right(potPoints)
+			.build());
 
         return super.render(graphics);
     }
