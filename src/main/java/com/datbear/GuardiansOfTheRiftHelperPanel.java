@@ -30,7 +30,7 @@ public class GuardiansOfTheRiftHelperPanel extends OverlayPanel {
         getMenuEntries().add(new OverlayMenuEntry(RUNELITE_OVERLAY_CONFIG, OPTION_CONFIGURE, "Guardians of the Rift Helper Overlay"));
     }
 
-	private int potentialtPoints(int savedPoints, int currentPoints)
+	private int potentialPoints(int savedPoints, int currentPoints)
 	{
 		if (currentPoints == 0){
 			return savedPoints;
@@ -69,20 +69,25 @@ public class GuardiansOfTheRiftHelperPanel extends OverlayPanel {
                         .right(plugin.getElementalRewardPoints() + "/" + plugin.getCatalyticRewardPoints())
                 .build());
 
-		final int potElementalPoints = potentialtPoints(plugin.getElementalRewardPoints(), plugin.getCurrentElementalRewardPoints());
-		final int potCatalyticPoints = potentialtPoints(plugin.getCatalyticRewardPoints(), plugin.getCurrentCatalyticRewardPoints());
-		final int elementalRemain = plugin.getCurrentElementalRewardPoints() % 100;
-		final int catalyticRemain = plugin.getCurrentCatalyticRewardPoints() % 100;
-		final String potPoints = potElementalPoints+"."+elementalRemain+"/"+potCatalyticPoints+"."+catalyticRemain;
-		final Color hasBalance = potElementalPoints == potCatalyticPoints ? Color.GREEN : Color.RED;
-
-		panelComponent.getChildren().add(LineComponent.builder()
+		if (config.potentialPoints())
+		{
+			final int potElementalPoints = potentialPoints(plugin.getElementalRewardPoints(), plugin.getCurrentElementalRewardPoints());
+			final int potCatalyticPoints = potentialPoints(plugin.getCatalyticRewardPoints(), plugin.getCurrentCatalyticRewardPoints());
+			final int elementalRemain = plugin.getCurrentElementalRewardPoints() % 100;
+			final int catalyticRemain = plugin.getCurrentCatalyticRewardPoints() % 100;
+			final String potPoints = potElementalPoints + "." + elementalRemain + "/" + potCatalyticPoints + "." + catalyticRemain;
+			Color potColor = Color.WHITE;
+			if (config.highlightPotential())
+			{
+				potColor = potElementalPoints == potCatalyticPoints ? config.potentialBalanceColor() : config.potentialUnbalanceColor();
+			}
+			panelComponent.getChildren().add(LineComponent.builder()
 				.left("Potential:")
-				.rightColor(hasBalance)
+				.rightColor(potColor)
 				.right(potPoints)
-			.build());
-
-        return super.render(graphics);
+				.build());
+		}
+		return super.render(graphics);
     }
 
 }

@@ -7,12 +7,10 @@ import javax.inject.Inject;
 import com.google.inject.Provides;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.*;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetID;
 import net.runelite.client.Notifier;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -84,8 +82,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private static final String CHECK_POINT_REGEX = "You have (\\d+) catalytic points and (\\d+) elemental points";
 	private static final Pattern CHECK_POINT_PATTERN = Pattern.compile(CHECK_POINT_REGEX);
 
-	private static final int BARRIER_DIALOG_WIDGET_GROUP = 229;
-	private static final int BARRIER_DIALOG_WIDGET_MESSAGE = 1;
+	private static final int DIALOG_WIDGET_GROUP = 229;
+	private static final int DIALOG_WIDGET_MESSAGE = 1;
 	private static final String BARRIER_DIALOG_FINISHING_UP = "It looks like the adventurers within are just finishing up. You must<br>wait until they are done to join.";
 
 	@Getter(AccessLevel.PACKAGE)
@@ -214,18 +212,6 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 			}
 		}
 
-		Widget rewardCheckWidget = client.getWidget(15007745);
-		if (rewardCheckWidget != null){
-			final String curRewards = Text.removeTags(rewardCheckWidget.getText());
-			final Matcher checkMatcher = CHECK_POINT_PATTERN.matcher(curRewards);
-			if (checkMatcher.find(0))
-			{
-				//For some reason these are reversed compared to everything else
-				catalyticRewardPoints = Integer.parseInt(checkMatcher.group(1));
-				elementalRewardPoints = Integer.parseInt(checkMatcher.group(2));
-			}
-		}
-
 		Widget elementalRuneWidget = client.getWidget(ELEMENTAL_RUNE_WIDGET_ID);
 		Widget catalyticRuneWidget = client.getWidget(CATALYTIC_RUNE_WIDGET_ID);
 		Widget guardianCountWidget = client.getWidget(GUARDIAN_COUNT_WIDGET_ID);
@@ -256,13 +242,23 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 			portalSpawnTime = Optional.empty();
 		}
 
-		Widget barrierDialog = client.getWidget(BARRIER_DIALOG_WIDGET_GROUP, BARRIER_DIALOG_WIDGET_MESSAGE);
-		if (barrierDialog != null)
+		Widget dialog = client.getWidget(DIALOG_WIDGET_GROUP, DIALOG_WIDGET_MESSAGE);
+		if (dialog != null)
 		{
-			String barrierText = barrierDialog.getText();
-			if (barrierText.equals(BARRIER_DIALOG_FINISHING_UP)) {
+			String dialogText = dialog.getText();
+			if (dialogText.equals(BARRIER_DIALOG_FINISHING_UP)) {
 				// Allow one click per tick while the portal is closed
 				entryBarrierClickCooldown = 0;
+			}
+			else
+			{
+				final Matcher checkMatcher = CHECK_POINT_PATTERN.matcher(dialogText);
+				if (checkMatcher.find(0))
+				{
+					//For some reason these are reversed compared to everything else
+					catalyticRewardPoints = Integer.parseInt(checkMatcher.group(1));
+					elementalRewardPoints = Integer.parseInt(checkMatcher.group(2));
+				}
 			}
 		}
 	}
@@ -397,7 +393,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	public void onMenuOptionClicked(MenuOptionClicked event)
 	{
 		if(!config.quickPassCooldown()) return;
-		
+
 		// Only allow one click on the entry barrier's quick-pass option for every 3 game ticks
 		if (event.getId() == 43700 && event.getMenuAction().getId() == 5)
 		{

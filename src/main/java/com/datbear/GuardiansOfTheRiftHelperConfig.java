@@ -5,14 +5,33 @@ import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 
 import java.awt.*;
+import net.runelite.client.config.ConfigSection;
 
 @ConfigGroup("guardiansOfTheRiftHelper")
 public interface GuardiansOfTheRiftHelperConfig extends Config
 {
+	@ConfigSection(
+		name = "Outlines",
+		description = "All options relating to colored outlines",
+		position =  0,
+		closedByDefault = true
+	)
+	String outlines = "outlines";
+
+	@ConfigSection(
+		name = "Overlay",
+		description = "All options relating to the overlay",
+		position =  1,
+		closedByDefault = true
+
+	)
+	String overlay = "overlay";
+
     @ConfigItem(
-            keyName = "showOverlay",
-            name = "Show Overlay",
-            description = "Toggles the status overlay."
+			keyName = "showOverlay",
+			name = "Show Overlay",
+			description = "Toggles the status overlay.",
+			section = overlay
     )
     default boolean showOverlay()
     {
@@ -42,7 +61,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
     @ConfigItem(
             keyName = "outlineCellTable",
             name = "Outline cell table",
-            description = "Outlines the Cell table when you have no cells remaining."
+            description = "Outlines the Cell table when you have no cells remaining.",
+		section = outlines
     )
     default boolean outlineCellTable()
     {
@@ -52,7 +72,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
     @ConfigItem(
             keyName = "outlineGreatGuardian",
             name = "Outline Great Guardian",
-            description = "Outlines the Great Guardian when you have elemental or catalytic essence in your inventory."
+            description = "Outlines the Great Guardian when you have elemental or catalytic essence in your inventory.",
+			section = outlines
     )
     default boolean outlineGreatGuardian()
     {
@@ -73,7 +94,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
     @ConfigItem(
             keyName = "elementalGuardianColor",
             name = "Elemental outline",
-            description = "Color of the outline on the active elemental guardian."
+            description = "Color of the outline on the active elemental guardian.",
+			section = outlines
     )
     default Color elementalGuardianColor()
     {
@@ -83,7 +105,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
     @ConfigItem(
             keyName = "catalyticGuardianColor",
             name = "Catalytic outline",
-            description = "Color of the outline on the active catalytic guardian."
+            description = "Color of the outline on the active catalytic guardian.",
+			section = outlines
     )
     default Color catalyticGuardianColor()
     {
@@ -95,7 +118,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
             keyName = "outlineGuardiansByTier",
             name = "Color guardians by cell tier",
             description = "Outlines active portal guardians with colors based on their Cell charge tiers instead of Elemental vs Catalytic.",
-            position = 2
+            position = 2,
+			section = outlines
     )
     default boolean colorGuardiansByTier() { return false; }
 
@@ -104,7 +128,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
             keyName = "weakGuardianColor",
             name = "Weak outline",
             description = "Color of the outline on an active weak guardian.",
-            position = 3
+            position = 3,
+			section = outlines
     )
     default Color weakGuardianColor()
     {
@@ -115,7 +140,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
             keyName = "mediumGuardianColor",
             name = "Medium outline",
             description = "Color of the outline on an active medium guardian.",
-            position = 4
+            position = 4,
+			section = outlines
     )
     default Color mediumGuardianColor()
     {
@@ -126,7 +152,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
             keyName = "strongGuardianColor",
             name = "Strong outline",
             description = "Color of the outline on an active strong guardian.",
-            position = 5
+            position = 5,
+			section = outlines
     )
     default Color strongGuardianColor()
     {
@@ -137,12 +164,47 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
             keyName = "overchargedGuardianColor",
             name = "Overcharged outline",
             description = "Color of the outline on an active overcharged guardian.",
-            position = 6
+            position = 6,
+			section = outlines
     )
     default Color overchargedGuardianColor()
     {
         return Color.RED;
     }
 
+	@ConfigItem(
+		keyName = "potentialPoints",
+		name = "Show potential points",
+		description = "Show tallied up points during a game",
+		position =  7,
+		section = overlay
+	)
+	default boolean potentialPoints() { return true; }
 
+	@ConfigItem(
+		keyName = "highlightPotential",
+		name = "Highlight potential points",
+		description =  "Highlight potential points depending on balance",
+		position =  8,
+		section = overlay
+	)
+	default boolean highlightPotential() { return true; }
+
+	@ConfigItem(
+		keyName = "potentialUnbalanceColor",
+		name = "Unbalanced potential color",
+		description =  "Color to highlight potential points when unbalanced",
+		position = 9,
+		section = overlay
+	)
+	default Color potentialUnbalanceColor() { return Color.RED; }
+
+	@ConfigItem(
+		keyName = "potentialBalanceColor",
+		name = "Balanced potential color",
+		description =  "Color to highlight potential points when balanced",
+		position =  10,
+		section = overlay
+	)
+	default Color potentialBalanceColor() { return Color.GREEN; }
 }
