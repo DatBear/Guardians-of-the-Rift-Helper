@@ -78,7 +78,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 
 	private static final int PORTAL_ID = 43729;
 
-	private static final String REWARD_POINT_REGEX = "Elemental attunement level:[^>]+>(\\d+).*Catalytic attunement level:[^>]+>(\\d+)";
+	private static final String REWARD_POINT_REGEX = "Total elemental energy:[^>]+>(\\d+).*Total catalytic energy:[^>]+>(\\d+).";
 	private static final Pattern REWARD_POINT_PATTERN = Pattern.compile(REWARD_POINT_REGEX);
 	private static final String CHECK_POINT_REGEX = "You have (\\d+) catalytic points and (\\d+) elemental points";
 	private static final Pattern CHECK_POINT_PATTERN = Pattern.compile(CHECK_POINT_REGEX);
