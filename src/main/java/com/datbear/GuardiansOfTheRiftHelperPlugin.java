@@ -60,6 +60,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 
 	private static final int CATALYTIC_GUARDIAN_STONE_ID = 26880;
 	private static final int ELEMENTAL_GUARDIAN_STONE_ID = 26881;
+	private static final int POLYELEMENTAL_GUARDIAN_STONE_ID = 26941;
 
 	private static final int ELEMENTAL_ESSENCE_PILE_ID = 43722;
 	private static final int CATALYTIC_ESSENCE_PILE_ID = 43723;
@@ -183,8 +184,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		}
 
 		Item[] items = event.getItemContainer().getItems();
-		outlineGreatGuardian = Arrays.stream(items).anyMatch(x -> x.getId() == ELEMENTAL_GUARDIAN_STONE_ID || x.getId() == CATALYTIC_GUARDIAN_STONE_ID);
-		outlineUnchargedCellTable = Arrays.stream(items).noneMatch(x -> x.getId() == UNCHARGED_CELL_ITEM_ID);
+		outlineGreatGuardian = Arrays.stream(items).anyMatch(x -> x.getId() == ELEMENTAL_GUARDIAN_STONE_ID || x.getId() == CATALYTIC_GUARDIAN_STONE_ID || x.getId() == POLYELEMENTAL_GUARDIAN_STONE_ID);		outlineUnchargedCellTable = Arrays.stream(items).noneMatch(x -> x.getId() == UNCHARGED_CELL_ITEM_ID);
 		shouldMakeGuardian = Arrays.stream(items).anyMatch(x -> x.getId() == CHISEL_ID) && Arrays.stream(items).anyMatch(x -> x.getId() == OVERCHARGED_CELL_ID) && areGuardiansNeeded;
 
 		List<Integer> invTalismans = Arrays.stream(items).mapToInt(x -> x.getId()).filter(x -> TALISMAN_IDS.contains(x)).boxed().collect(Collectors.toList());
