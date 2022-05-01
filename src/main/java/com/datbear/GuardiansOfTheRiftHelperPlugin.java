@@ -72,6 +72,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 
 	private static final int GUARDIAN_ACTIVE_ANIM = 9363;
 
+	private static final int PARENT_WIDGET_ID = 48889857;
 	private static final int CATALYTIC_RUNE_WIDGET_ID = 48889876;
 	private static final int ELEMENTAL_RUNE_WIDGET_ID = 48889879;
 	private static final int GUARDIAN_COUNT_WIDGET_ID = 48889886;
@@ -151,7 +152,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 			return false;
 		}
 
-		Widget elementalRuneWidget = client.getWidget(ELEMENTAL_RUNE_WIDGET_ID);
+		Widget elementalRuneWidget = client.getWidget(PARENT_WIDGET_ID);
 		return elementalRuneWidget != null;
 	}
 
