@@ -76,7 +76,7 @@ public class GuardiansOfTheRiftHelperPanel extends OverlayPanel {
 			final int potCatalyticPoints = potentialPoints(plugin.getCatalyticRewardPoints(), plugin.getCurrentCatalyticRewardPoints());
 			final int elementalRemain = plugin.getCurrentElementalRewardPoints() % 100;
 			final int catalyticRemain = plugin.getCurrentCatalyticRewardPoints() % 100;
-			final String potPoints = potElementalPoints + "." + elementalRemain + "/" + potCatalyticPoints + "." + catalyticRemain;
+			final String potPoints = String.format("%d.%02d/%d.%02d", potElementalPoints, elementalRemain, potCatalyticPoints, catalyticRemain);
 			Color potColor = Color.WHITE;
 			if (config.highlightPotential())
 			{
