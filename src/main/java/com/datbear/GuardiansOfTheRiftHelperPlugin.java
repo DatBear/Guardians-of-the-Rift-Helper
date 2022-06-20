@@ -24,7 +24,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import net.runelite.client.util.Text;
 
 @Slf4j
 @PluginDescriptor(
@@ -316,6 +315,20 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 
 		if(gameObject.getId() == PORTAL_ID){
 			portal = gameObject;
+			if (config.notifyPortalSpawn()) {
+				// The hint arrow is cleared under the following circumstances:
+				// 1. Player enters the portal
+				// 2. Plugin is "reset()"
+				// 3. The portal despawns
+				client.setHintArrow(portal.getWorldLocation());
+			}
+		}
+	}
+
+	@Subscribe
+	public void onGameObjectDespawned(GameObjectDespawned event) {
+		if(event.getGameObject().getId() == PORTAL_ID){
+			client.clearHintArrow();
 		}
 	}
 
@@ -357,6 +370,9 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		if(chatMessage.getType() != ChatMessageType.SPAM && chatMessage.getType() != ChatMessageType.GAMEMESSAGE) return;
 
 		String msg = chatMessage.getMessage();
+		if(msg.contains("You step through the portal")) {
+			client.clearHintArrow();
+		}
 		if(msg.contains("The rift becomes active!")) {
 			lastPortalDespawnTime = Optional.of(Instant.now());
 			nextGameStart = Optional.empty();
@@ -389,6 +405,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		greatGuardian = null;
 		catalyticEssencePile = null;
 		elementalEssencePile = null;
+		client.clearHintArrow();
 	}
 
 	@Provides
