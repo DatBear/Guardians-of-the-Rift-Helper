@@ -1,6 +1,5 @@
 package com.datbear;
 
-import com.google.common.collect.ImmutableSet;
 import net.runelite.api.*;
 import net.runelite.api.Point;
 import net.runelite.client.game.ItemManager;
