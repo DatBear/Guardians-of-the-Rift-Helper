@@ -75,7 +75,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private static final int CATALYTIC_RUNE_WIDGET_ID = 48889876;
 	private static final int ELEMENTAL_RUNE_WIDGET_ID = 48889879;
 	private static final int GUARDIAN_COUNT_WIDGET_ID = 48889886;
-	private static final int PORTAL_WIDGET_ID = 48889883;
+	private static final int PORTAL_WIDGET_ID = 48889884;
 
 	private static final int PORTAL_ID = 43729;
 
@@ -143,6 +143,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private boolean areGuardiansNeeded = false;
 	private int entryBarrierClickCooldown = 0;
 
+	private final Map<String, String> expandCardinal = new HashMap<>();
+
 	private boolean checkInMinigame() {
 		GameState gameState = client.getGameState();
 		if (gameState != GameState.LOGGED_IN
@@ -166,6 +168,14 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		overlayManager.add(overlay);
 		overlayManager.add(panel);
 		isInMinigame = true;
+		expandCardinal.put("S",  "south");
+		expandCardinal.put("SW", "south west");
+		expandCardinal.put("W",  "west");
+		expandCardinal.put("NW", "north west");
+		expandCardinal.put("N",  "north");
+		expandCardinal.put("NE", "north east");
+		expandCardinal.put("E",  "east");
+		expandCardinal.put("SE", "south east");
 	}
 
 	@Override
@@ -235,7 +245,9 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 					isFirstPortal = false;
 				}
 				if(config.notifyPortalSpawn()){
-					notifier.notify("A portal has spawned in the " + portalWidget.getText() + ".");
+					String compass = portalWidget.getText().split(" ")[0];
+					String full = expandCardinal.getOrDefault(compass, "unknown");
+					notifier.notify("A portal has spawned in the " + full + ".");
 				}
 			}
 			portalLocation = portalWidget.getText();
