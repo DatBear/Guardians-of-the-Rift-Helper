@@ -79,7 +79,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 
 	private static final int PORTAL_ID = 43729;
 
-	private static final String REWARD_POINT_REGEX = "Total elemental energy:[^>]+>(\\d+).*Total catalytic energy:[^>]+>(\\d+).";
+	private static final String REWARD_POINT_REGEX = "Total elemental energy:[^>]+>([\\d,]+).*Total catalytic energy:[^>]+>([\\d,]+).";
 	private static final Pattern REWARD_POINT_PATTERN = Pattern.compile(REWARD_POINT_REGEX);
 	private static final String CHECK_POINT_REGEX = "You have (\\d+) catalytic energy and (\\d+) elemental energy";
 	private static final Pattern CHECK_POINT_PATTERN = Pattern.compile(CHECK_POINT_REGEX);
@@ -404,8 +404,9 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 
 		Matcher rewardPointMatcher = REWARD_POINT_PATTERN.matcher(msg);
 		if(rewardPointMatcher.find()) {
-			elementalRewardPoints = Integer.parseInt(rewardPointMatcher.group(1));
-			catalyticRewardPoints = Integer.parseInt(rewardPointMatcher.group(2));
+			// Use replaceAll to remove thousands separators from the text
+			elementalRewardPoints = Integer.parseInt(rewardPointMatcher.group(1).replaceAll(",", ""));
+			catalyticRewardPoints = Integer.parseInt(rewardPointMatcher.group(2).replaceAll(",", ""));
 		}
 		//log.info(msg);
 	}
