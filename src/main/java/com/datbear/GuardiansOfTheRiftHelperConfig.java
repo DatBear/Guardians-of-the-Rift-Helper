@@ -172,11 +172,32 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
         return Color.RED;
     }
 
+    @ConfigItem(
+            keyName = "colorGuardiansWithInsufficientRunecraftingLevel",
+            name = "Color guardians if Runecrafting level is insufficient",
+            description = "Outlines active portal guardians with color if the required Runecrafting level exceeds the players current Runecrafting level.",
+            position = 7,
+            section = outlines
+    )
+    default boolean colorGuardiansWithInsufficientRunecraftingLevel() { return false; }
+
+    @ConfigItem(
+            keyName = "colorGuardiansWithInsufficientRunecraftingLevelColor",
+            name = "Color that guardians get if Runecrafting level is insufficient",
+            description = "Color of the outline on the active catalytic guardian if it is too high level.",
+            position = 8,
+            section = outlines
+    )
+    default Color colorGuardiansWithInsufficientRunecraftingLevelColor()
+    {
+        return Color.RED;
+    }
+
 	@ConfigItem(
 		keyName = "potentialPoints",
 		name = "Show potential points",
 		description = "Show tallied up points during a game",
-		position =  7,
+		position =  9,
 		section = overlay
 	)
 	default boolean potentialPoints() { return true; }
@@ -185,7 +206,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
 		keyName = "highlightPotential",
 		name = "Highlight potential points",
 		description =  "Highlight potential points depending on balance",
-		position =  8,
+		position =  10,
 		section = overlay
 	)
 	default boolean highlightPotential() { return true; }
@@ -194,7 +215,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
 		keyName = "potentialUnbalanceColor",
 		name = "Unbalanced potential color",
 		description =  "Color to highlight potential points when unbalanced",
-		position = 9,
+		position = 11,
 		section = overlay
 	)
 	default Color potentialUnbalanceColor() { return Color.RED; }
@@ -203,7 +224,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
 		keyName = "potentialBalanceColor",
 		name = "Balanced potential color",
 		description =  "Color to highlight potential points when balanced",
-		position =  10,
+		position =  12,
 		section = overlay
 	)
 	default Color potentialBalanceColor() { return Color.GREEN; }
