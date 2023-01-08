@@ -112,7 +112,7 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
             if(hull == null) continue;
 
             GuardianInfo info = GUARDIAN_INFO.get(guardian.getId());
-            Color color = info.getColor(config);
+            Color color = info.getColor(config, client.getBoostedSkillLevel(Skill.RUNECRAFT));
             graphics.setColor(color);
 
             modelOutlineRenderer.drawOutline(guardian, 2, color, 2);
@@ -135,7 +135,7 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
 
             if(talismanGuardian.isPresent() && activeGuardians.stream().noneMatch(x -> x.getId() == talismanGuardian.get().getId())) {
                 GuardianInfo talismanGuardianInfo = GUARDIAN_INFO.get(talismanGuardian.get().getId());
-                modelOutlineRenderer.drawOutline(talismanGuardian.get(), 2, talismanGuardianInfo.getColor(config), 2);
+                modelOutlineRenderer.drawOutline(talismanGuardian.get(), 2, talismanGuardianInfo.getColor(config, client.getBoostedSkillLevel(Skill.RUNECRAFT)), 2);
                 OverlayUtil.renderImageLocation(client, graphics, talismanGuardian.get().getLocalLocation(), talismanGuardianInfo.getTalismanImage(itemManager), RUNE_IMAGE_OFFSET);
             }
         }
