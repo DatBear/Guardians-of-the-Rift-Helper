@@ -18,9 +18,10 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 
-import java.awt.Color;
+import java.awt.*;
 import java.time.Instant;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -47,6 +48,12 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 
 	@Inject
 	private GuardiansOfTheRiftHelperPanel panel;
+
+	@Inject
+	private GuardiansOfTheRiftHelperStartTimerOverlay startTimerOverlay;
+
+	@Inject
+	private GuardiansOfTheRiftHelperInactivePortalOverlay inactivePortalOverlay;
 
 	@Inject
 	private Notifier notifier;
@@ -76,6 +83,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private static final int ELEMENTAL_RUNE_WIDGET_ID = 48889879;
 	private static final int GUARDIAN_COUNT_WIDGET_ID = 48889886;
 	private static final int PORTAL_WIDGET_ID = 48889884;
+
+	private final static int PORTAL_SPRITE_ID = 4368;
 
 	private static final int PORTAL_ID = 43729;
 
@@ -167,6 +176,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	{
 		overlayManager.add(overlay);
 		overlayManager.add(panel);
+		overlayManager.add(startTimerOverlay);
+		overlayManager.add(inactivePortalOverlay);
 		isInMinigame = true;
 		expandCardinal.put("S",  "south");
 		expandCardinal.put("SW", "south west");
@@ -182,6 +193,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	protected void shutDown() {
 		overlayManager.remove(overlay);
 		overlayManager.remove(panel);
+		overlayManager.remove(startTimerOverlay);
+		overlayManager.remove(inactivePortalOverlay);
 		reset();
 	}
 
@@ -474,5 +487,27 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 			return Color.YELLOW;
 		}
 		return Color.GREEN;
+	}
+
+	public int getParentWidgetId() {
+		return PARENT_WIDGET_ID;
+	}
+
+	public int getPortalWidgetId() {
+		return PORTAL_WIDGET_ID;
+	}
+
+	public int getPortalSpriteId() {
+		return PORTAL_SPRITE_ID;
+	}
+
+	public void drawCenteredString(Graphics g, String text, Rectangle rect) {
+		FontMetrics metrics = g.getFontMetrics();
+		int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
+		int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
+		g.setColor(Color.BLACK);
+		g.drawString(text, x + 1, y + 1);
+		g.setColor(Color.WHITE);
+		g.drawString(text, x, y);
 	}
 }
