@@ -19,24 +19,13 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
 	String outlines = "outlines";
 
 	@ConfigSection(
-		name = "Overlay",
-		description = "All options relating to the overlay",
+		name = "Overlays",
+		description = "All options relating to overlays",
 		position =  1,
 		closedByDefault = true
 
 	)
-	String overlay = "overlay";
-
-    @ConfigItem(
-			keyName = "showOverlay",
-			name = "Show Overlay",
-			description = "Toggles the status overlay.",
-			section = overlay
-    )
-    default boolean showOverlay()
-    {
-        return true;
-    }
+	String overlays = "overlays";
 
     @ConfigItem(
             keyName = "portalSpawn",
@@ -172,12 +161,48 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
         return Color.RED;
     }
 
+    @ConfigItem(
+            keyName = "showStartTimerOverlay",
+            name = "Show Start Timer Overlay",
+            description = "Toggles the start timer overlay.",
+            position =  7,
+            section = overlays
+    )
+    default boolean showStartTimerOverlay()
+    {
+        return true;
+    }
+
+    @ConfigItem(
+            keyName = "showInactivePortalOverlay",
+            name = "Show Inactive Portal Overlay",
+            description = "Toggles the inactive portal overlay.",
+            position =  8,
+            section = overlays
+    )
+    default boolean showInactivePortalOverlay()
+    {
+        return true;
+    }
+
+    @ConfigItem(
+            keyName = "showPointsOverlay",
+            name = "Show Points Overlay",
+            description = "Toggles the points overlay.",
+            position =  9,
+            section = overlays
+    )
+    default boolean showPointsOverlay()
+    {
+        return true;
+    }
+
 	@ConfigItem(
 		keyName = "potentialPoints",
 		name = "Show potential points",
 		description = "Show tallied up points during a game",
-		position =  7,
-		section = overlay
+		position =  10,
+		section = overlays
 	)
 	default boolean potentialPoints() { return true; }
 
@@ -185,8 +210,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
 		keyName = "highlightPotential",
 		name = "Highlight potential points",
 		description =  "Highlight potential points depending on balance",
-		position =  8,
-		section = overlay
+		position =  11,
+		section = overlays
 	)
 	default boolean highlightPotential() { return true; }
 
@@ -194,8 +219,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
 		keyName = "potentialUnbalanceColor",
 		name = "Unbalanced potential color",
 		description =  "Color to highlight potential points when unbalanced",
-		position = 9,
-		section = overlay
+		position = 12,
+		section = overlays
 	)
 	default Color potentialUnbalanceColor() { return Color.RED; }
 
@@ -203,8 +228,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
 		keyName = "potentialBalanceColor",
 		name = "Balanced potential color",
 		description =  "Color to highlight potential points when balanced",
-		position =  10,
-		section = overlay
+		position =  13,
+		section = overlays
 	)
 	default Color potentialBalanceColor() { return Color.GREEN; }
 }
