@@ -30,7 +30,11 @@ public class GuardiansOfTheRiftHelperInactivePortalOverlay extends Overlay {
 
     @Override
     public Dimension render(Graphics2D graphics) {
-        if ((!plugin.isInMainRegion() && !plugin.isInMinigame()) || !config.showInactivePortalOverlay()) {
+        if (!plugin.isInMainRegion() && !plugin.isInMinigame()) {
+            return null;
+        }
+
+        if(config.inactivePortalOverlayLocation() != TimerOverlayLocation.GameOverlay && config.inactivePortalOverlayLocation() != TimerOverlayLocation.Both){
             return null;
         }
 

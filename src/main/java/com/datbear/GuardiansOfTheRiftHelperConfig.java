@@ -162,27 +162,27 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
     }
 
     @ConfigItem(
-            keyName = "showStartTimerOverlay",
-            name = "Show Start Timer Overlay",
-            description = "Toggles the start timer overlay.",
+            keyName = "startTimerOverlayLocation",
+            name = "Start Timer Overlay Location",
+            description = "Toggles the start timer overlay location.",
             position =  7,
             section = overlays
     )
-    default boolean showStartTimerOverlay()
+    default TimerOverlayLocation startTimerOverlayLocation()
     {
-        return true;
+        return TimerOverlayLocation.InfoBox;
     }
 
     @ConfigItem(
-            keyName = "showInactivePortalOverlay",
-            name = "Show Inactive Portal Overlay",
-            description = "Toggles the inactive portal overlay.",
+            keyName = "inactivePortalOverlayLocation",
+            name = "Inactive Portal Overlay Location",
+            description = "Toggles the inactive portal overlay location.",
             position =  8,
             section = overlays
     )
-    default boolean showInactivePortalOverlay()
+    default TimerOverlayLocation inactivePortalOverlayLocation()
     {
-        return true;
+        return TimerOverlayLocation.InfoBox;
     }
 
     @ConfigItem(

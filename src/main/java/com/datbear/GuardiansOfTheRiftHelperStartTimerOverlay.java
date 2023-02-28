@@ -24,7 +24,11 @@ public class GuardiansOfTheRiftHelperStartTimerOverlay extends Overlay {
 
     @Override
     public Dimension render(Graphics2D graphics) {
-        if ((!plugin.isInMainRegion() && !plugin.isInMinigame()) || !config.showStartTimerOverlay()) {
+        if ((!plugin.isInMainRegion() && !plugin.isInMinigame())) {
+            return null;
+        }
+
+        if(config.startTimerOverlayLocation() != TimerOverlayLocation.GameOverlay && config.startTimerOverlayLocation() != TimerOverlayLocation.Both){
             return null;
         }
 
