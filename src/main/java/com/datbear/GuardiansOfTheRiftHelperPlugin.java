@@ -120,8 +120,6 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	@Getter(AccessLevel.PACKAGE)
 	private boolean isInMainRegion;
 	@Getter(AccessLevel.PACKAGE)
-	private boolean outlineGreatGuardian = false;
-	@Getter(AccessLevel.PACKAGE)
 	private boolean outlineUnchargedCellTable = false;
 	@Getter(AccessLevel.PACKAGE)
 	private boolean shouldMakeGuardian = false;
@@ -212,7 +210,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		}
 
 		Item[] items = event.getItemContainer().getItems();
-		outlineGreatGuardian = Arrays.stream(items).anyMatch(x -> x.getId() == ELEMENTAL_GUARDIAN_STONE_ID || x.getId() == CATALYTIC_GUARDIAN_STONE_ID || x.getId() == POLYELEMENTAL_GUARDIAN_STONE_ID);		outlineUnchargedCellTable = Arrays.stream(items).noneMatch(x -> x.getId() == UNCHARGED_CELL_ITEM_ID);
+		outlineUnchargedCellTable = Arrays.stream(items).noneMatch(x -> x.getId() == UNCHARGED_CELL_ITEM_ID);
 		shouldMakeGuardian = Arrays.stream(items).anyMatch(x -> x.getId() == CHISEL_ID) && Arrays.stream(items).anyMatch(x -> x.getId() == OVERCHARGED_CELL_ID) && areGuardiansNeeded;
 
 		List<Integer> invTalismans = Arrays.stream(items).mapToInt(x -> x.getId()).filter(x -> TALISMAN_IDS.contains(x)).boxed().collect(Collectors.toList());
