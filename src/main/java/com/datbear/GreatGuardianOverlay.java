@@ -15,17 +15,12 @@ import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.outline.ModelOutlineRenderer;
 
 import javax.inject.Inject;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.util.Optional;
 
 public class GreatGuardianOverlay extends Overlay {
-    private final int GREAT_GUARDIAN_ID = 11403;
-    private Optional<NPC> greatGuardian = Optional.empty();
-    private boolean elementalGuardianStones;
-    private boolean catalyticGuardianStones;
-    private boolean polyelementalGuardianStones;
-
     @Inject
     private ItemManager itemManager;
 
@@ -35,24 +30,38 @@ public class GreatGuardianOverlay extends Overlay {
     @Inject
     private GuardiansOfTheRiftHelperConfig config;
 
+    private final int GREAT_GUARDIAN_ID = 11403;
+    private Optional<NPC> greatGuardian = Optional.empty();
+    private boolean elementalGuardianStones;
+    private boolean catalyticGuardianStones;
+    private boolean polyelementalGuardianStones;
 
     public GreatGuardianOverlay() {
         setPosition(OverlayPosition.DYNAMIC);
         setLayer(OverlayLayer.UNDER_WIDGETS);
     }
 
+    /**
+     * Save great guardian npc for rendering.
+     */
     public void onNpcSpawned(final NpcSpawned event) {
         if (event.getNpc().getId() == GREAT_GUARDIAN_ID) {
             this.greatGuardian = Optional.of(event.getNpc());
         }
     }
 
+    /**
+     * Clear great guardian on loading.
+     */
     public void onGameStateChanged(final GameStateChanged event) {
         if (event.getGameState() == GameState.LOADING) {
             this.greatGuardian = Optional.empty();
         }
     }
 
+    /**
+     * Check if player has guardian stones in their inventory.
+     */
     public void onItemContainerChanged(final ItemContainerChanged event) {
         if (event.getItemContainer().getId() == InventoryID.INVENTORY.getId()) {
             final ItemContainer inventory = event.getItemContainer();
@@ -65,12 +74,12 @@ public class GreatGuardianOverlay extends Overlay {
     @Override
     public Dimension render(final Graphics2D graphics) {
         if (this.greatGuardian.isPresent() && config.outlineGreatGuardian() && (this.elementalGuardianStones || this.catalyticGuardianStones || this.polyelementalGuardianStones)) {
-            modelOutlineRenderer.drawOutline(this.greatGuardian.get(), 2,
+            final Color color =
                 this.elementalGuardianStones ? config.elementalGuardianColor() :
                 this.catalyticGuardianStones ? config.catalyticGuardianColor() :
-                config.polyelementalGuardianColor(),
-                2
-            );
+                config.polyelementalGuardianColor();
+
+            modelOutlineRenderer.drawOutline(this.greatGuardian.get(), 2, color, 2);
         }
 
         return null;

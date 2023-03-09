@@ -53,6 +53,9 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private GreatGuardianOverlay greatGuardianOverlay;
 
 	@Inject
+	private CraftableGuardiansOverlay craftableGuardiansOverlay;
+
+	@Inject
 	private GuardiansOfTheRiftHelperStartTimerOverlay startTimerOverlay;
 
 	@Inject
@@ -65,26 +68,15 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 
 	private static final Set<Integer> GUARDIAN_IDS = ImmutableSet.of(43705, 43701, 43710, 43702, 43703, 43711, 43704, 43708, 43712, 43707, 43706, 43709, 43702);
 	private static final Set<Integer> TALISMAN_IDS = GuardianInfo.ALL.stream().mapToInt(x -> x.talismanId).boxed().collect(Collectors.toSet());
-	private static final int GREAT_GUARDIAN_ID = 11403;
-
-	private static final int CATALYTIC_GUARDIAN_STONE_ID = 26880;
-	private static final int ELEMENTAL_GUARDIAN_STONE_ID = 26881;
-	private static final int POLYELEMENTAL_GUARDIAN_STONE_ID = 26941;
-
-	private static final int ELEMENTAL_ESSENCE_PILE_ID = 43722;
-	private static final int CATALYTIC_ESSENCE_PILE_ID = 43723;
 
 	private static final int UNCHARGED_CELL_ITEM_ID = 26882;
 	private static final int UNCHARGED_CELL_GAMEOBJECT_ID = 43732;
-	private static final int CHISEL_ID = 1755;
-	private static final int OVERCHARGED_CELL_ID = 26886;
 
 	private static final int GUARDIAN_ACTIVE_ANIM = 9363;
 
 	private static final int PARENT_WIDGET_ID = 48889857;
 	private static final int CATALYTIC_RUNE_WIDGET_ID = 48889876;
 	private static final int ELEMENTAL_RUNE_WIDGET_ID = 48889879;
-	private static final int GUARDIAN_COUNT_WIDGET_ID = 48889886;
 	private static final int PORTAL_WIDGET_ID = 48889884;
 
 	private final static int PORTAL_SPRITE_ID = 4368;
@@ -109,10 +101,6 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	@Getter(AccessLevel.PACKAGE)
 	private GameObject unchargedCellTable;
 	@Getter(AccessLevel.PACKAGE)
-	private GameObject catalyticEssencePile;
-	@Getter(AccessLevel.PACKAGE)
-	private GameObject elementalEssencePile;
-	@Getter(AccessLevel.PACKAGE)
 	private GameObject portal;
 
 	@Getter(AccessLevel.PACKAGE)
@@ -121,8 +109,6 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private boolean isInMainRegion;
 	@Getter(AccessLevel.PACKAGE)
 	private boolean outlineUnchargedCellTable = false;
-	@Getter(AccessLevel.PACKAGE)
-	private boolean shouldMakeGuardian = false;
 	@Getter(AccessLevel.PACKAGE)
 	private boolean isFirstPortal = false;
 
@@ -148,7 +134,6 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private String portalLocation;
 	private int lastElementalRuneSprite;
 	private int lastCatalyticRuneSprite;
-	private boolean areGuardiansNeeded = false;
 	private int entryBarrierClickCooldown = 0;
 
 	private final Map<String, String> expandCardinal = new HashMap<>();
@@ -178,6 +163,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		overlayManager.add(startTimerOverlay);
 		overlayManager.add(inactivePortalOverlay);
 		overlayManager.add(greatGuardianOverlay);
+		overlayManager.add(craftableGuardiansOverlay);
 		isInMinigame = true;
 		expandCardinal.put("S",  "south");
 		expandCardinal.put("SW", "south west");
@@ -196,6 +182,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		overlayManager.remove(startTimerOverlay);
 		overlayManager.remove(inactivePortalOverlay);
 		overlayManager.remove(greatGuardianOverlay);
+		overlayManager.remove(craftableGuardiansOverlay);
 		reset();
 	}
 
@@ -203,6 +190,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	public void onItemContainerChanged(ItemContainerChanged event)
 	{
 		greatGuardianOverlay.onItemContainerChanged(event);
+		craftableGuardiansOverlay.onItemContainerChanged(event);
 
 		if (!isInMainRegion || event.getItemContainer() != client.getItemContainer(InventoryID.INVENTORY))
 		{
@@ -211,7 +199,6 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 
 		Item[] items = event.getItemContainer().getItems();
 		outlineUnchargedCellTable = Arrays.stream(items).noneMatch(x -> x.getId() == UNCHARGED_CELL_ITEM_ID);
-		shouldMakeGuardian = Arrays.stream(items).anyMatch(x -> x.getId() == CHISEL_ID) && Arrays.stream(items).anyMatch(x -> x.getId() == OVERCHARGED_CELL_ID) && areGuardiansNeeded;
 
 		List<Integer> invTalismans = Arrays.stream(items).mapToInt(x -> x.getId()).filter(x -> TALISMAN_IDS.contains(x)).boxed().collect(Collectors.toList());
 		if(invTalismans.stream().count() != inventoryTalismans.stream().count()){
@@ -223,6 +210,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	@Subscribe
 	public void onGameTick(GameTick tick)
 	{
+		craftableGuardiansOverlay.onGameTick();
+
 		isInMinigame = checkInMinigame();
 		isInMainRegion = checkInMainRegion();
 		if (entryBarrierClickCooldown > 0) {
@@ -243,16 +232,10 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 
 		Widget elementalRuneWidget = client.getWidget(ELEMENTAL_RUNE_WIDGET_ID);
 		Widget catalyticRuneWidget = client.getWidget(CATALYTIC_RUNE_WIDGET_ID);
-		Widget guardianCountWidget = client.getWidget(GUARDIAN_COUNT_WIDGET_ID);
 		Widget portalWidget = client.getWidget(PORTAL_WIDGET_ID);
 
 		lastElementalRuneSprite = parseRuneWidget(elementalRuneWidget, lastElementalRuneSprite);
 		lastCatalyticRuneSprite = parseRuneWidget(catalyticRuneWidget, lastCatalyticRuneSprite);
-
-		if(guardianCountWidget != null) {
-			String text = guardianCountWidget.getText();
-			areGuardiansNeeded = text != null && !text.contains("10/10");
-		}
 
 		if(portalWidget != null && !portalWidget.isHidden()){
 			if(!portalSpawnTime.isPresent() && lastPortalDespawnTime.isPresent()) {
@@ -322,6 +305,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	@Subscribe
 	public void onGameObjectSpawned(GameObjectSpawned event)
 	{
+		craftableGuardiansOverlay.onGameObjectSpawned(event);
+
 		GameObject gameObject = event.getGameObject();
 		if(GUARDIAN_IDS.contains(event.getGameObject().getId())) {
 			guardians.removeIf(g -> g.getId() == gameObject.getId());
@@ -331,14 +316,6 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 
 		if(gameObject.getId() == UNCHARGED_CELL_GAMEOBJECT_ID){
 			unchargedCellTable = gameObject;
-		}
-
-		if(gameObject.getId() == ELEMENTAL_ESSENCE_PILE_ID){
-			elementalEssencePile = gameObject;
-		}
-
-		if(gameObject.getId() == CATALYTIC_ESSENCE_PILE_ID){
-			catalyticEssencePile = gameObject;
 		}
 
 		if(gameObject.getId() == PORTAL_ID){
@@ -370,6 +347,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	public void onGameStateChanged(GameStateChanged event)
 	{
 		greatGuardianOverlay.onGameStateChanged(event);
+		craftableGuardiansOverlay.onGameStateChanged(event);
+
 		if (event.getGameState() == GameState.LOADING)
 		{
 			// on region changes the tiles get set to null
@@ -429,8 +408,6 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		guardians.clear();
 		activeGuardians.clear();
 		unchargedCellTable = null;
-		catalyticEssencePile = null;
-		elementalEssencePile = null;
 		client.clearHintArrow();
 	}
 

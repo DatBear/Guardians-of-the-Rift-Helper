@@ -68,7 +68,6 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
         if(plugin.isInMainRegion()){
             renderActiveGuardians(graphics);
             highlightUnchargedCellTable(graphics);
-            highlightEssencePiles(graphics);
             renderPortal(graphics);
         }
         return null;
@@ -82,19 +81,6 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
             String timeRemainingText = ""+(Math.round(millis/100)/10d);
             Point textLocation =  Perspective.getCanvasTextLocation(client, graphics, portal.getLocalLocation(), timeRemainingText, 100);
             OverlayUtil.renderTextLocation(graphics, textLocation, timeRemainingText, Color.WHITE);
-        }
-    }
-
-    private void highlightEssencePiles(Graphics2D graphics){
-        if(plugin.isShouldMakeGuardian()) {
-            GameObject elementalEss = plugin.getElementalEssencePile();
-            GameObject catalyticEss = plugin.getCatalyticEssencePile();
-            if(elementalEss != null) {
-                modelOutlineRenderer.drawOutline(elementalEss, 2, GREEN, 2);
-            }
-            if(catalyticEss != null) {
-                modelOutlineRenderer.drawOutline(catalyticEss, 2, GREEN, 2);
-            }
         }
     }
 
