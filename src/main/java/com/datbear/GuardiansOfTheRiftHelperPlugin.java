@@ -50,6 +50,9 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private GuardiansOfTheRiftHelperPanel panel;
 
 	@Inject
+	private GreatGuardianOverlay greatGuardianOverlay;
+
+	@Inject
 	private GuardiansOfTheRiftHelperStartTimerOverlay startTimerOverlay;
 
 	@Inject
@@ -103,8 +106,6 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private final Set<GameObject> activeGuardians = new HashSet<>();
 	@Getter(AccessLevel.PACKAGE)
 	private final Set<Integer> inventoryTalismans = new HashSet<>();
-	@Getter(AccessLevel.PACKAGE)
-	private NPC greatGuardian;
 	@Getter(AccessLevel.PACKAGE)
 	private GameObject unchargedCellTable;
 	@Getter(AccessLevel.PACKAGE)
@@ -178,6 +179,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		overlayManager.add(panel);
 		overlayManager.add(startTimerOverlay);
 		overlayManager.add(inactivePortalOverlay);
+		overlayManager.add(greatGuardianOverlay);
 		isInMinigame = true;
 		expandCardinal.put("S",  "south");
 		expandCardinal.put("SW", "south west");
@@ -195,12 +197,15 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		overlayManager.remove(panel);
 		overlayManager.remove(startTimerOverlay);
 		overlayManager.remove(inactivePortalOverlay);
+		overlayManager.remove(greatGuardianOverlay);
 		reset();
 	}
 
 	@Subscribe
 	public void onItemContainerChanged(ItemContainerChanged event)
 	{
+		greatGuardianOverlay.onItemContainerChanged(event);
+
 		if (!isInMainRegion || event.getItemContainer() != client.getItemContainer(InventoryID.INVENTORY))
 		{
 			return;
@@ -358,17 +363,15 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	}
 
 	@Subscribe
-	public void onNpcSpawned(NpcSpawned npcSpawned) {
-		NPC npc = npcSpawned.getNpc();
-		if(npc.getId() == GREAT_GUARDIAN_ID){
-			greatGuardian = npc;
-		}
+	public void onNpcSpawned(NpcSpawned event) {
+		greatGuardianOverlay.onNpcSpawned(event);
 	}
 
 
 	@Subscribe
 	public void onGameStateChanged(GameStateChanged event)
 	{
+		greatGuardianOverlay.onGameStateChanged(event);
 		if (event.getGameState() == GameState.LOADING)
 		{
 			// on region changes the tiles get set to null
@@ -428,7 +431,6 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		guardians.clear();
 		activeGuardians.clear();
 		unchargedCellTable = null;
-		greatGuardian = null;
 		catalyticEssencePile = null;
 		elementalEssencePile = null;
 		client.clearHintArrow();

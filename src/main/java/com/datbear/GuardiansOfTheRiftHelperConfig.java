@@ -102,6 +102,17 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
         return Color.RED;
     }
 
+    @ConfigItem(
+            keyName = "polyelementalGuardianColor",
+            name = "Polyelemental outline",
+            description = "Color of the outline on the polyelemental great guardian.",
+            section = outlines
+    )
+    default Color polyelementalGuardianColor()
+    {
+        return Color.ORANGE;
+    }
+
 
     @ConfigItem(
             keyName = "outlineGuardiansByTier",

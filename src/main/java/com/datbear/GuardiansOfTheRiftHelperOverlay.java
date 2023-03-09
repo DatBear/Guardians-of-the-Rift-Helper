@@ -67,7 +67,6 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
     public Dimension render(Graphics2D graphics) {
         if(plugin.isInMainRegion()){
             renderActiveGuardians(graphics);
-            highlightGreatGuardian(graphics);
             highlightUnchargedCellTable(graphics);
             highlightEssencePiles(graphics);
             renderPortal(graphics);
@@ -138,17 +137,6 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
                 modelOutlineRenderer.drawOutline(talismanGuardian.get(), 2, talismanGuardianInfo.getColor(config), 2);
                 OverlayUtil.renderImageLocation(client, graphics, talismanGuardian.get().getLocalLocation(), talismanGuardianInfo.getTalismanImage(itemManager), RUNE_IMAGE_OFFSET);
             }
-        }
-    }
-
-    private void highlightGreatGuardian(Graphics2D graphics) {
-        if(!config.outlineGreatGuardian()){
-            return;
-        }
-
-        NPC greatGuardian = plugin.getGreatGuardian();
-        if(plugin.isOutlineGreatGuardian() && greatGuardian != null){
-            modelOutlineRenderer.drawOutline(greatGuardian, 2, Color.GREEN, 2);
         }
     }
 
