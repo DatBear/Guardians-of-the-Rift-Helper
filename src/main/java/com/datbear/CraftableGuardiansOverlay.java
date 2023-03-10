@@ -6,6 +6,8 @@ import net.runelite.api.GameState;
 import net.runelite.api.InventoryID;
 import net.runelite.api.ItemContainer;
 import net.runelite.api.ItemID;
+import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.GameObjectDespawned;
 import net.runelite.api.events.GameObjectSpawned;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.ItemContainerChanged;
@@ -37,6 +39,10 @@ public class CraftableGuardiansOverlay extends Overlay {
     private final int CATALYTIC_ESSENCE_PILE_ID = 43723;
 
     private final Pattern guardianCountRegex = Pattern.compile("(?<current>.+)/(?<total>.+)");
+    private final String riftClosed = "The Portal Guardians close their rifts.";
+    private final String enoughGuardians = "There are already enough rift guardians in the room.";
+    private final String defeated = "The Great Guardian was defeated!";
+    private final String noneed = "There's no need to do that right now.";
 
     private Optional<GameObject> elementalEssencePile = Optional.empty();
     private Optional<GameObject> catalyticEssencePile = Optional.empty();
@@ -62,6 +68,37 @@ public class CraftableGuardiansOverlay extends Overlay {
             this.elementalEssencePile = Optional.of(gameObject);
         } else if (gameObject.getId() == CATALYTIC_ESSENCE_PILE_ID) {
             this.catalyticEssencePile = Optional.of(gameObject);
+        }
+    }
+
+    /**
+     * Clear essence piles objects after guardian has been crafted.
+     */
+    public void onGameObjectDespawned(final GameObjectDespawned event) {
+        final GameObject gameObject = event.getGameObject();
+
+        if (gameObject.getId() == ELEMENTAL_ESSENCE_PILE_ID) {
+            this.elementalEssencePile = Optional.empty();
+        } else if (gameObject.getId() == CATALYTIC_ESSENCE_PILE_ID) {
+            this.catalyticEssencePile = Optional.empty();
+        }
+    }
+
+    /**
+     * Detect rift closed message to highlight essence piles for extra guardians after game ended.
+     * Detect enough guardians to hide essence piles highlights after game ended.
+     */
+    public void onChatMessage(final ChatMessage chatMessage) {
+        final String message = chatMessage.getMessage().replaceAll("</?col.*>", "");
+
+        if (message.equals(riftClosed) || message.equals(defeated)) {
+            this.countCurrent = 0;
+            // Maximum of 6 extra craftable guardians in a large group.
+            this.countTotal = Math.min(6, this.countTotal);
+
+        // Enough guardians already.
+        } else if (message.equals(enoughGuardians) || message.equals(noneed)) {
+            this.countCurrent = this.countTotal;
         }
     }
 

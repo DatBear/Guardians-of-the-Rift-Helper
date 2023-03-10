@@ -332,6 +332,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 
 	@Subscribe
 	public void onGameObjectDespawned(GameObjectDespawned event) {
+		craftableGuardiansOverlay.onGameObjectDespawned(event);
 		if(event.getGameObject().getId() == PORTAL_ID){
 			client.clearHintArrow();
 		}
@@ -371,6 +372,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	@Subscribe
 	public void onChatMessage(ChatMessage chatMessage)
 	{
+		craftableGuardiansOverlay.onChatMessage(chatMessage);
+
 		if(!isInMainRegion) return;
 		if(chatMessage.getType() != ChatMessageType.SPAM && chatMessage.getType() != ChatMessageType.GAMEMESSAGE) return;
 
