@@ -41,7 +41,6 @@ public class CraftableGuardiansOverlay extends Overlay {
     private final Pattern guardianCountRegex = Pattern.compile("(?<current>.+)/(?<total>.+)");
     private final String riftClosed = "The Portal Guardians close their rifts.";
     private final String enoughGuardians = "There are already enough rift guardians in the room.";
-    private final String defeated = "The Great Guardian was defeated!";
     private final String noneed = "There's no need to do that right now.";
     private final String open = "The Portal Guardians will keep their rifts open for another 30 seconds.";
 
@@ -92,7 +91,7 @@ public class CraftableGuardiansOverlay extends Overlay {
     public void onChatMessage(final ChatMessage chatMessage) {
         final String message = chatMessage.getMessage().replaceAll("</?col.*>", "");
 
-        if (message.equals(open) || message.equals(defeated)) {
+        if (message.equals(open)) {
             this.countCurrent = 0;
             // Maximum of 6 extra craftable guardians in a large group.
             this.countTotal = Math.min(6, this.countTotal);
