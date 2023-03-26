@@ -69,6 +69,7 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
             renderActiveGuardians(graphics);
             highlightGreatGuardian(graphics);
             highlightUnchargedCellTable(graphics);
+            highlightDepositPool(graphics);
             highlightEssencePiles(graphics);
             renderPortal(graphics);
         }
@@ -160,6 +161,17 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
         GameObject table = plugin.getUnchargedCellTable();
         if(plugin.isOutlineUnchargedCellTable() && table != null){
             modelOutlineRenderer.drawOutline(table, 2, GREEN, 2);
+        }
+    }
+
+    private void highlightDepositPool(Graphics2D graphics) {
+        if(!config.outlineDepositPool()){
+            return;
+        }
+
+        GameObject depositPool = plugin.getDepositPool();
+        if(plugin.isOutlineDepositPool() && depositPool != null){
+            modelOutlineRenderer.drawOutline(depositPool, 2, GREEN, 2);
         }
     }
 }

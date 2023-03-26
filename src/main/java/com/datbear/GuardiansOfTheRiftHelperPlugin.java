@@ -61,6 +61,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private static final int MINIGAME_MAIN_REGION = 14484;
 
 	private static final Set<Integer> GUARDIAN_IDS = ImmutableSet.of(43705, 43701, 43710, 43702, 43703, 43711, 43704, 43708, 43712, 43707, 43706, 43709, 43702);
+	private static final Set<Integer> RUNE_IDS = ImmutableSet.of(554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 4694, 4695, 4696, 4697, 4698, 4699);
 	private static final Set<Integer> TALISMAN_IDS = GuardianInfo.ALL.stream().mapToInt(x -> x.talismanId).boxed().collect(Collectors.toSet());
 	private static final int GREAT_GUARDIAN_ID = 11403;
 
@@ -75,6 +76,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private static final int UNCHARGED_CELL_GAMEOBJECT_ID = 43732;
 	private static final int CHISEL_ID = 1755;
 	private static final int OVERCHARGED_CELL_ID = 26886;
+
+	private static final int DEPOSIT_POOL_ID = 43696;
 
 	private static final int GUARDIAN_ACTIVE_ANIM = 9363;
 
@@ -108,6 +111,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	@Getter(AccessLevel.PACKAGE)
 	private GameObject unchargedCellTable;
 	@Getter(AccessLevel.PACKAGE)
+	private GameObject depositPool;
+	@Getter(AccessLevel.PACKAGE)
 	private GameObject catalyticEssencePile;
 	@Getter(AccessLevel.PACKAGE)
 	private GameObject elementalEssencePile;
@@ -122,6 +127,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private boolean outlineGreatGuardian = false;
 	@Getter(AccessLevel.PACKAGE)
 	private boolean outlineUnchargedCellTable = false;
+	@Getter(AccessLevel.PACKAGE)
+	private boolean outlineDepositPool = false;
 	@Getter(AccessLevel.PACKAGE)
 	private boolean shouldMakeGuardian = false;
 	@Getter(AccessLevel.PACKAGE)
@@ -209,6 +216,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		Item[] items = event.getItemContainer().getItems();
 		outlineGreatGuardian = Arrays.stream(items).anyMatch(x -> x.getId() == ELEMENTAL_GUARDIAN_STONE_ID || x.getId() == CATALYTIC_GUARDIAN_STONE_ID || x.getId() == POLYELEMENTAL_GUARDIAN_STONE_ID);		outlineUnchargedCellTable = Arrays.stream(items).noneMatch(x -> x.getId() == UNCHARGED_CELL_ITEM_ID);
 		shouldMakeGuardian = Arrays.stream(items).anyMatch(x -> x.getId() == CHISEL_ID) && Arrays.stream(items).anyMatch(x -> x.getId() == OVERCHARGED_CELL_ID) && areGuardiansNeeded;
+
+		outlineDepositPool = Arrays.stream(items).anyMatch(x -> RUNE_IDS.contains(x.getId()));
 
 		List<Integer> invTalismans = Arrays.stream(items).mapToInt(x -> x.getId()).filter(x -> TALISMAN_IDS.contains(x)).boxed().collect(Collectors.toList());
 		if(invTalismans.stream().count() != inventoryTalismans.stream().count()){
@@ -330,6 +339,10 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 			unchargedCellTable = gameObject;
 		}
 
+		if(gameObject.getId() == DEPOSIT_POOL_ID){
+			depositPool = gameObject;
+		}
+
 		if(gameObject.getId() == ELEMENTAL_ESSENCE_PILE_ID){
 			elementalEssencePile = gameObject;
 		}
@@ -428,6 +441,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		guardians.clear();
 		activeGuardians.clear();
 		unchargedCellTable = null;
+		depositPool = null;
 		greatGuardian = null;
 		catalyticEssencePile = null;
 		elementalEssencePile = null;
