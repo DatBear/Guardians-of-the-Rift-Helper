@@ -1,10 +1,11 @@
 package com.datbear;
 
 public enum LimitOutlineToConfigOptions {
-    Catalytic,
-    Elemental,
-    Level,
-    Tier,
-    Profit,
-    Custom
+    NO_LIMIT,
+    CATALYTIC,
+    ELEMENTAL,
+    HIGHEST_LEVEL,
+    HIGHEST_TIER,
+    HIGHEST_PROFIT,
+    CUSTOM;
 }

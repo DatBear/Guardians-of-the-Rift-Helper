@@ -95,10 +95,32 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     }
 
     @ConfigItem(
+            keyName = "talismanOverride",
+            name = "Talisman override",
+            description = "Override active outlined portals with the talisman guardian portal if in inventory.",
+            position = 2,
+            section = outlines
+    )
+    default boolean talismanOverride() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "levelOverride",
+            name = "Level override",
+            description = "Limited the active outlined guardian portals to the ones which you have the sufficient level for.",
+            position = 3,
+            section = outlines
+    )
+    default boolean levelOverride() {
+        return false;
+    }
+
+    @ConfigItem(
             keyName = "outlineGuardiansByTier",
             name = "Color guardians by cell tier",
             description = "Outlines active portal guardians with colors based on their Cell charge tiers instead of Elemental vs Catalytic.",
-            position = 2,
+            position = 4,
             section = outlines
     )
     default boolean colorGuardiansByTier() {
@@ -109,7 +131,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "weakGuardianColor",
             name = "Weak outline",
             description = "Color of the outline on an active weak guardian.",
-            position = 3,
+            position = 5,
             section = outlines
     )
     default Color weakGuardianColor() {
@@ -120,7 +142,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "mediumGuardianColor",
             name = "Medium outline",
             description = "Color of the outline on an active medium guardian.",
-            position = 4,
+            position = 6,
             section = outlines
     )
     default Color mediumGuardianColor() {
@@ -131,7 +153,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "strongGuardianColor",
             name = "Strong outline",
             description = "Color of the outline on an active strong guardian.",
-            position = 5,
+            position = 7,
             section = outlines
     )
     default Color strongGuardianColor() {
@@ -142,33 +164,11 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "overchargedGuardianColor",
             name = "Overcharged outline",
             description = "Color of the outline on an active overcharged guardian.",
-            position = 6,
+            position = 8,
             section = outlines
     )
     default Color overchargedGuardianColor() {
         return Color.RED;
-    }
-
-    @ConfigItem(
-            keyName = "talismanOverride",
-            name = "Talisman override",
-            description = "Override active outlined portals with the talisman guardian portal if in inventory.",
-            position = 7,
-            section = outlines
-    )
-    default boolean talismanOverride() {
-        return false;
-    }
-
-    @ConfigItem(
-            keyName = "limitOutlinedGuardians",
-            name = "Limit outlined guardians",
-            description = "Limit the outlined guardians to a single one based on the following selection.",
-            position = 8,
-            section = outlines
-    )
-    default boolean limitOutlinedGuardians() {
-        return false;
     }
 
     @ConfigItem(
@@ -179,7 +179,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             section = outlines
     )
     default LimitOutlineToConfigOptions limitOutlineTo() {
-        return LimitOutlineToConfigOptions.Profit;
+        return LimitOutlineToConfigOptions.NO_LIMIT;
     }
 
     @ConfigItem(

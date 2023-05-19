@@ -116,27 +116,27 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
     private Comparator<GameObject> getLimitOutlineComparator() {
         Comparator<GameObject> comparator;
         switch (this.config.limitOutlineTo()) {
-            case Catalytic:
+            case CATALYTIC:
                 comparator = Comparator.comparing((GameObject guardian) -> !GUARDIAN_INFO.get(guardian.getId()).isCatalytic);
                 break;
-            case Elemental:
+            case ELEMENTAL:
                 comparator = Comparator.comparing((GameObject guardian) -> GUARDIAN_INFO.get(guardian.getId()).isCatalytic);
                 break;
-            case Level:
+            case HIGHEST_LEVEL:
                 comparator = Comparator.comparing((GameObject guardian) -> GUARDIAN_INFO.get(guardian.getId()).levelRequired).reversed();
                 break;
-            case Tier:
-                comparator = Comparator.comparing((GameObject guardian) -> GUARDIAN_INFO.get(guardian.getId()).cellType).reversed();
+            case HIGHEST_TIER:
+                comparator = Comparator.comparing((GameObject guardian) -> GUARDIAN_INFO.get(guardian.getId()).cellType).thenComparing((GameObject guardian) -> calculateProfitPerFragment(GUARDIAN_INFO.get(guardian.getId()).runeId, this.client.getBoostedSkillLevel(Skill.RUNECRAFT), this.client.getItemContainer(InventoryID.EQUIPMENT))).reversed();
                 break;
-            case Profit:
+            case HIGHEST_PROFIT:
                 comparator = Comparator.comparing((GameObject guardian) -> calculateProfitPerFragment(GUARDIAN_INFO.get(guardian.getId()).runeId, this.client.getBoostedSkillLevel(Skill.RUNECRAFT), this.client.getItemContainer(InventoryID.EQUIPMENT))).reversed();
                 break;
-            case Custom:
+            case CUSTOM:
                 List<String> customList = Arrays.asList(config.onlyOutlineGuardianByCustom().toUpperCase().split(","));
                 comparator = Comparator.comparing(guardian -> customList.indexOf(itemManager.getItemComposition(GUARDIAN_INFO.get(guardian.getId()).runeId).getMembersName().toUpperCase()));
                 break;
             default:
-                comparator = Comparator.comparing(GameObject::getId);
+                comparator = Comparator.comparing(GameObject::getId).reversed();
                 break;
         }
         return comparator;
@@ -170,9 +170,9 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
 
         if (!config.talismanOverride() || !isTalismanGuardianPortalFound) {
             activeGuardians.stream()
-                    .filter(guardian -> guardian != null && guardian.getConvexHull() != null)
+                    .filter(guardian -> guardian != null && guardian.getConvexHull() != null && (!this.config.levelOverride() || GUARDIAN_INFO.get(guardian.getId()).levelRequired <= this.client.getBoostedSkillLevel(Skill.RUNECRAFT)))
                     .sorted(getLimitOutlineComparator())
-                    .limit(this.config.limitOutlinedGuardians() ? 1 : 2)
+                    .limit(this.config.limitOutlineTo() == LimitOutlineToConfigOptions.NO_LIMIT ? 2 : 1)
                     .forEach(guardian -> {
                         GuardianInfo guardianInfo = GUARDIAN_INFO.get(guardian.getId());
                         Color color = guardianInfo.getColor(config);
