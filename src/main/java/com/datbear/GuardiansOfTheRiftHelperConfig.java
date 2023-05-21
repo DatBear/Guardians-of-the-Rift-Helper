@@ -95,21 +95,10 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     }
 
     @ConfigItem(
-            keyName = "talismanOverride",
-            name = "Talisman override",
-            description = "Override active outlined portals with the talisman guardian portal if in inventory.",
-            position = 2,
-            section = outlines
-    )
-    default boolean talismanOverride() {
-        return false;
-    }
-
-    @ConfigItem(
             keyName = "levelOverride",
             name = "Level override",
             description = "Limited the active outlined guardian portals to the ones which you have the sufficient level for.",
-            position = 3,
+            position = 2,
             section = outlines
     )
     default boolean levelOverride() {
@@ -120,7 +109,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "outlineGuardiansByTier",
             name = "Color guardians by cell tier",
             description = "Outlines active portal guardians with colors based on their Cell charge tiers instead of Elemental vs Catalytic.",
-            position = 4,
+            position = 3,
             section = outlines
     )
     default boolean colorGuardiansByTier() {
@@ -131,7 +120,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "weakGuardianColor",
             name = "Weak outline",
             description = "Color of the outline on an active weak guardian.",
-            position = 5,
+            position = 4,
             section = outlines
     )
     default Color weakGuardianColor() {
@@ -142,7 +131,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "mediumGuardianColor",
             name = "Medium outline",
             description = "Color of the outline on an active medium guardian.",
-            position = 6,
+            position = 5,
             section = outlines
     )
     default Color mediumGuardianColor() {
@@ -153,7 +142,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "strongGuardianColor",
             name = "Strong outline",
             description = "Color of the outline on an active strong guardian.",
-            position = 7,
+            position = 6,
             section = outlines
     )
     default Color strongGuardianColor() {
@@ -164,7 +153,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "overchargedGuardianColor",
             name = "Overcharged outline",
             description = "Color of the outline on an active overcharged guardian.",
-            position = 8,
+            position = 7,
             section = outlines
     )
     default Color overchargedGuardianColor() {
@@ -175,7 +164,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "limitOutlineTo",
             name = "Limit outline to",
             description = "Outline only the active guardian portal with the highest selected option.",
-            position = 9,
+            position = 8,
             section = outlines
     )
     default LimitOutlineToConfigOptions limitOutlineTo() {
@@ -186,7 +175,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "onlyOutlineGuardianCustom",
             name = "Custom outline list",
             description = "Outline only the highest listed portal guardian.",
-            position = 10,
+            position = 9,
             section = outlines
     )
     default String onlyOutlineGuardianByCustom() {
@@ -197,7 +186,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "startTimerOverlayLocation",
             name = "Start Timer Overlay Location",
             description = "Toggles the start timer overlay location.",
-            position = 11,
+            position = 10,
             section = overlays
     )
     default TimerOverlayLocation startTimerOverlayLocation() {
@@ -208,7 +197,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "inactivePortalOverlayLocation",
             name = "Inactive Portal Overlay Location",
             description = "Toggles the inactive portal overlay location.",
-            position = 12,
+            position = 11,
             section = overlays
     )
     default TimerOverlayLocation inactivePortalOverlayLocation() {
@@ -219,7 +208,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "showPointsOverlay",
             name = "Show Points Overlay",
             description = "Toggles the points overlay.",
-            position = 13,
+            position = 12,
             section = overlays
     )
     default boolean showPointsOverlay() {
@@ -230,7 +219,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "potentialPoints",
             name = "Show potential points",
             description = "Show tallied up points during a game",
-            position = 14,
+            position = 13,
             section = overlays
     )
     default boolean potentialPoints() {
@@ -241,7 +230,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "highlightPotential",
             name = "Highlight potential points",
             description = "Highlight potential points depending on balance",
-            position = 15,
+            position = 14,
             section = overlays
     )
     default boolean highlightPotential() {
@@ -252,7 +241,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "potentialUnbalanceColor",
             name = "Unbalanced potential color",
             description = "Color to highlight potential points when unbalanced",
-            position = 16,
+            position = 15,
             section = overlays
     )
     default Color potentialUnbalanceColor() {
@@ -263,7 +252,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "potentialBalanceColor",
             name = "Balanced potential color",
             description = "Color to highlight potential points when balanced",
-            position = 17,
+            position = 16,
             section = overlays
     )
     default Color potentialBalanceColor() {

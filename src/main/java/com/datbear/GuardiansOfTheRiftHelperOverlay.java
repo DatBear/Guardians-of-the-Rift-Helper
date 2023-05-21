@@ -155,31 +155,32 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
         Set<GameObject> activeGuardians = plugin.getActiveGuardians();
         Set<GameObject> guardians = plugin.getGuardians();
         Set<Integer> inventoryTalismans = plugin.getInventoryTalismans();
+        int talismanGuardianId = -1;
 
-        boolean isTalismanGuardianPortalFound = false;
         for (int talisman : inventoryTalismans) {
             Optional<GameObject> talismanGuardian = guardians.stream().filter(x -> GUARDIAN_INFO.get(x.getId()).talismanId == talisman).findFirst();
 
-            isTalismanGuardianPortalFound = talismanGuardian.isPresent() && activeGuardians.stream().noneMatch(x -> x.getId() == talismanGuardian.get().getId());
-            if (isTalismanGuardianPortalFound) {
-                GuardianInfo talismanGuardianInfo = GUARDIAN_INFO.get(talismanGuardian.get().getId());
-                modelOutlineRenderer.drawOutline(talismanGuardian.get(), 2, talismanGuardianInfo.getColor(config), 2);
-                OverlayUtil.renderImageLocation(client, graphics, talismanGuardian.get().getLocalLocation(), talismanGuardianInfo.getTalismanImage(itemManager), RUNE_IMAGE_OFFSET);
+            if (talismanGuardian.isPresent() && activeGuardians.stream().noneMatch(x -> x.getId() == talismanGuardian.get().getId())) {
+                activeGuardians.add(talismanGuardian.get());
+                talismanGuardianId = talismanGuardian.get().getId();
             }
         }
 
-        if (!config.talismanOverride() || !isTalismanGuardianPortalFound) {
-            activeGuardians.stream()
-                    .filter(guardian -> guardian != null && guardian.getConvexHull() != null && (!this.config.levelOverride() || GUARDIAN_INFO.get(guardian.getId()).levelRequired <= this.client.getBoostedSkillLevel(Skill.RUNECRAFT)))
-                    .sorted(getLimitOutlineComparator())
-                    .limit(this.config.limitOutlineTo() == LimitOutlineToConfigOptions.NO_LIMIT ? 2 : 1)
-                    .forEach(guardian -> {
-                        GuardianInfo guardianInfo = GUARDIAN_INFO.get(guardian.getId());
-                        Color color = guardianInfo.getColor(config);
-                        graphics.setColor(color);
+        int finalTalismanGuardianId = talismanGuardianId;
+        activeGuardians.stream()
+                .filter(guardian -> guardian != null && guardian.getConvexHull() != null && (!this.config.levelOverride() || GUARDIAN_INFO.get(guardian.getId()).levelRequired <= this.client.getBoostedSkillLevel(Skill.RUNECRAFT)))
+                .sorted(getLimitOutlineComparator())
+                .limit(this.config.limitOutlineTo() == LimitOutlineToConfigOptions.NO_LIMIT ? 12 : 1)
+                .forEach(guardian -> {
+                    GuardianInfo guardianInfo = GUARDIAN_INFO.get(guardian.getId());
 
-                        modelOutlineRenderer.drawOutline(guardian, 2, color, 2);
+                    Color color = guardianInfo.getColor(config);
+                    graphics.setColor(color);
+                    modelOutlineRenderer.drawOutline(guardian, 2, color, 2);
 
+                    if (finalTalismanGuardianId != -1 && finalTalismanGuardianId == guardian.getId()) {
+                        OverlayUtil.renderImageLocation(client, graphics, guardian.getLocalLocation(), guardianInfo.getTalismanImage(itemManager), RUNE_IMAGE_OFFSET);
+                    } else {
                         BufferedImage img = guardianInfo.getRuneImage(itemManager);
                         OverlayUtil.renderImageLocation(client, graphics, guardian.getLocalLocation(), img, RUNE_IMAGE_OFFSET);
                         if (guardianInfo.spawnTime.isPresent()) {
@@ -191,8 +192,8 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
                             textLocation = new Point((int) (imgLocation.getX() + img.getWidth() / 2d - strBounds.getWidth() / 2d), textLocation.getY());
                             OverlayUtil.renderTextLocation(graphics, textLocation, timeRemainingText, Color.WHITE);
                         }
-                    });
-        }
+                    }
+                });
     }
 
     private void highlightGreatGuardian(Graphics2D graphics) {
