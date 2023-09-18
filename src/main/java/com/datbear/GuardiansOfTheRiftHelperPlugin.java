@@ -88,6 +88,9 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 
 	private static final int PORTAL_ID = 43729;
 
+	private static final int LOCKED_BARRIER_ID = 43849;
+	private static final int UNLOCKED_BARRIER_ID = 43700;
+
 	private static final String REWARD_POINT_REGEX = "Total elemental energy:[^>]+>([\\d,]+).*Total catalytic energy:[^>]+>([\\d,]+).";
 	private static final Pattern REWARD_POINT_PATTERN = Pattern.compile(REWARD_POINT_REGEX);
 	private static final String CHECK_POINT_REGEX = "You have (\\d+) catalytic energy and (\\d+) elemental energy";
@@ -151,6 +154,11 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private int lastCatalyticRuneSprite;
 	private boolean areGuardiansNeeded = false;
 	private int entryBarrierClickCooldown = 0;
+
+	// entryBarrierIsLocked == Empty -> Barrier has not yet been seen
+	//                      == True  -> Barrier was last seen locked
+	//                      == False -> Barrier was last seen unlocked
+	private Optional<Boolean> entryBarrierIsLocked = Optional.empty();
 
 	private final Map<String, String> expandCardinal = new HashMap<>();
 
@@ -348,12 +356,27 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 				client.setHintArrow(portal.getWorldLocation());
 			}
 		}
+		if(gameObject.getId() == LOCKED_BARRIER_ID){
+			entryBarrierIsLocked = Optional.of(true);
+		}
+		if(gameObject.getId() == UNLOCKED_BARRIER_ID){
+			entryBarrierIsLocked = Optional.of(false);
+		}
 	}
 
 	@Subscribe
 	public void onGameObjectDespawned(GameObjectDespawned event) {
 		if(event.getGameObject().getId() == PORTAL_ID){
 			client.clearHintArrow();
+		}
+		if(event.getGameObject().getId() == LOCKED_BARRIER_ID){
+			if (entryBarrierIsLocked.orElse(false)) {
+				notifier.notify("Rift Barrier is about to unlock!");
+			}
+			entryBarrierIsLocked = Optional.of(false);
+		}
+		if(event.getGameObject().getId() == UNLOCKED_BARRIER_ID){
+			entryBarrierIsLocked = Optional.of(true);
 		}
 	}
 
