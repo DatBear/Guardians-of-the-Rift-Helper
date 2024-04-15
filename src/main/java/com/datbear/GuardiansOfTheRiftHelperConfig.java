@@ -1,5 +1,6 @@
 package com.datbear;
 
+import net.runelite.client.config.Alpha;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
@@ -79,7 +80,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
     {
         return true;
     }
-
+    @Alpha
     @ConfigItem(
             keyName = "elementalGuardianColor",
             name = "Elemental outline",
@@ -90,7 +91,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
     {
         return Color.GREEN;
     }
-
+    @Alpha
     @ConfigItem(
             keyName = "catalyticGuardianColor",
             name = "Catalytic outline",
@@ -112,7 +113,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
     )
     default boolean colorGuardiansByTier() { return false; }
 
-
+    @Alpha
     @ConfigItem(
             keyName = "weakGuardianColor",
             name = "Weak outline",
@@ -124,7 +125,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
     {
         return Color.WHITE;
     }
-
+    @Alpha
     @ConfigItem(
             keyName = "mediumGuardianColor",
             name = "Medium outline",
@@ -136,7 +137,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
     {
         return Color.BLUE;
     }
-
+    @Alpha
     @ConfigItem(
             keyName = "strongGuardianColor",
             name = "Strong outline",
@@ -148,7 +149,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
     {
         return Color.GREEN;
     }
-
+    @Alpha
     @ConfigItem(
             keyName = "overchargedGuardianColor",
             name = "Overcharged outline",
@@ -214,7 +215,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
 		section = overlays
 	)
 	default boolean highlightPotential() { return true; }
-
+	@Alpha
 	@ConfigItem(
 		keyName = "potentialUnbalanceColor",
 		name = "Unbalanced potential color",
@@ -223,7 +224,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
 		section = overlays
 	)
 	default Color potentialUnbalanceColor() { return Color.RED; }
-
+	@Alpha
 	@ConfigItem(
 		keyName = "potentialBalanceColor",
 		name = "Balanced potential color",
