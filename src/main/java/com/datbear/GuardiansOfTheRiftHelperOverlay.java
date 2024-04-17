@@ -91,10 +91,10 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
             GameObject elementalEss = plugin.getElementalEssencePile();
             GameObject catalyticEss = plugin.getCatalyticEssencePile();
             if(elementalEss != null) {
-                modelOutlineRenderer.drawOutline(elementalEss, 2, GREEN, 2);
+                modelOutlineRenderer.drawOutline(elementalEss, 2, config.essencePileColor(), 2);
             }
             if(catalyticEss != null) {
-                modelOutlineRenderer.drawOutline(catalyticEss, 2, GREEN, 2);
+                modelOutlineRenderer.drawOutline(catalyticEss, 2, config.essencePileColor(), 2);
             }
         }
     }
