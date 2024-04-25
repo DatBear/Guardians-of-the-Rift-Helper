@@ -443,7 +443,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event)
 	{
-		if(!config.quickPassCooldown()) return;
+		if(config.quickPassCooldown() == 0) return;
 
 		// Only allow one click on the entry barrier's quick-pass option for every 3 game ticks
 		if (event.getId() == 43700 && event.getMenuAction().getId() == 5)
@@ -454,7 +454,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 			}
 			else
 			{
-				entryBarrierClickCooldown = 3;
+				entryBarrierClickCooldown = config.quickPassCooldown();
 			}
 		}
 	}
