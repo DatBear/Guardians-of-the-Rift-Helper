@@ -119,15 +119,17 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
 
             BufferedImage img = info.getRuneImage(itemManager);
             OverlayUtil.renderImageLocation(client, graphics, guardian.getLocalLocation(), img, RUNE_IMAGE_OFFSET);
-            if(info.spawnTime.isPresent()) {
-                Point imgLocation = Perspective.getCanvasImageLocation(client, guardian.getLocalLocation(), img, RUNE_IMAGE_OFFSET);
-                long millis = ChronoUnit.MILLIS.between(Instant.now(), info.spawnTime.get().plusMillis((long)Math.floor(GUARDIAN_TICK_COUNT * 600)));
-                String timeRemainingText = ""+(Math.round(millis/100)/10d);
-                Rectangle2D strBounds = graphics.getFontMetrics().getStringBounds(timeRemainingText, graphics);
-                Point textLocation =  Perspective.getCanvasTextLocation(client, graphics, guardian.getLocalLocation(), timeRemainingText, RUNE_IMAGE_OFFSET+60);
-                textLocation = new Point((int)(imgLocation.getX() + img.getWidth()/2d - strBounds.getWidth()/2d), textLocation.getY());
-                OverlayUtil.renderTextLocation(graphics, textLocation, timeRemainingText, Color.WHITE);
-            }
+            if(!info.spawnTime.isPresent()) continue;
+
+            Point imgLocation = Perspective.getCanvasImageLocation(client, guardian.getLocalLocation(), img, RUNE_IMAGE_OFFSET);
+            long millis = ChronoUnit.MILLIS.between(Instant.now(), info.spawnTime.get().plusMillis((long)Math.floor(GUARDIAN_TICK_COUNT * 600)));
+            String timeRemainingText = ""+(Math.round(millis/100)/10d);
+            Rectangle2D strBounds = graphics.getFontMetrics().getStringBounds(timeRemainingText, graphics);
+            Point textLocation =  Perspective.getCanvasTextLocation(client, graphics, guardian.getLocalLocation(), timeRemainingText, RUNE_IMAGE_OFFSET+60);
+            if (textLocation == null) continue;
+
+            textLocation = new Point((int)(imgLocation.getX() + img.getWidth()/2d - strBounds.getWidth()/2d), textLocation.getY());
+            OverlayUtil.renderTextLocation(graphics, textLocation, timeRemainingText, Color.WHITE);
         }
 
         for(int talisman : inventoryTalismans){
