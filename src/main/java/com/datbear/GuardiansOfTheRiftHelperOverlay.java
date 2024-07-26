@@ -115,7 +115,9 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
             Color color = info.getColor(config);
             graphics.setColor(color);
 
-            modelOutlineRenderer.drawOutline(guardian, 2, color, 2);
+            if (config.guardianOutline()) {
+                modelOutlineRenderer.drawOutline(guardian, config.guardianBorderWidth(), color, config.guardianOutlineFeather());
+            }
 
             BufferedImage img = info.getRuneImage(itemManager);
             OverlayUtil.renderImageLocation(client, graphics, guardian.getLocalLocation(), img, RUNE_IMAGE_OFFSET);

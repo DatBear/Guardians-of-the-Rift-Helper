@@ -1,12 +1,8 @@
 package com.datbear;
 
-import net.runelite.client.config.Alpha;
-import net.runelite.client.config.Config;
-import net.runelite.client.config.ConfigGroup;
-import net.runelite.client.config.ConfigItem;
+import net.runelite.client.config.*;
 
 import java.awt.*;
-import net.runelite.client.config.ConfigSection;
 
 @ConfigGroup("guardiansOfTheRiftHelper")
 public interface GuardiansOfTheRiftHelperConfig extends Config
@@ -27,6 +23,54 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
 
 	)
 	String overlays = "overlays";
+
+    @ConfigSection(
+            name = "Guardian Render Style",
+            closedByDefault = true,
+            position = 0,
+            description = "Highlighting style"
+    )
+    String style = "style";
+
+    @ConfigItem(
+            position = 1,
+            keyName = "guardianBorderWidth",
+            name = "Border Width",
+            description = "Width of the highlighted NPC border",
+            section = style
+    )
+    default int guardianBorderWidth()
+    {
+        return 2;
+    }
+
+    @ConfigItem(
+            position = 2,
+            keyName = "guardianOutlineFeather",
+            name = "Outline feather",
+            description = "Specify between 0-4 how much of the model outline should be faded",
+            section = style
+    )
+    @Range(
+            min = 0,
+            max = 4
+    )
+    default int guardianOutlineFeather()
+    {
+        return 0;
+    }
+
+    @ConfigItem(
+            position = 0,
+            keyName = "guardianOutline",
+            name = "Highlight outline",
+            description = "Configures whether or not NPC should be highlighted by outline",
+            section = style
+    )
+    default boolean guardianOutline()
+    {
+        return true;
+    }
 
     @ConfigItem(
             keyName = "portalSpawn",
