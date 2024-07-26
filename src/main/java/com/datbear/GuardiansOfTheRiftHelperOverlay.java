@@ -108,6 +108,9 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
             GuardianInfo info = GUARDIAN_INFO.get(guardian.getId());
 
             if (info.cellType.compareTo(best) > 0 && info.levelRequired < client.getBoostedSkillLevel(Skill.RUNECRAFT)) {
+                if (info.cellType == CellType.Overcharged) {
+                    return CellType.Overcharged;
+                }
                 best = info.cellType;
             }
         }
