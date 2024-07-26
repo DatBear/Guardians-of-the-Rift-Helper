@@ -511,4 +511,20 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		g.setColor(Color.WHITE);
 		g.drawString(text, x, y);
 	}
+
+	public int potentialPointsElemental() {
+		return potentialPoints(getElementalRewardPoints(), getCurrentElementalRewardPoints());
+	}
+
+	public int potentialPointsCatalytic() {
+		return potentialPoints(getCatalyticRewardPoints(), getCurrentCatalyticRewardPoints());
+	}
+
+	private int potentialPoints(int savedPoints, int currentPoints)
+	{
+		if (currentPoints == 0){
+			return savedPoints;
+		}
+		return savedPoints += currentPoints / 100;
+	}
 }
