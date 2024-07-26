@@ -137,7 +137,9 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
 
             if(talismanGuardian.isPresent() && activeGuardians.stream().noneMatch(x -> x.getId() == talismanGuardian.get().getId())) {
                 GuardianInfo talismanGuardianInfo = GUARDIAN_INFO.get(talismanGuardian.get().getId());
-                modelOutlineRenderer.drawOutline(talismanGuardian.get(), 2, talismanGuardianInfo.getColor(config), 2);
+                if (config.guardianOutline()) {
+                    modelOutlineRenderer.drawOutline(talismanGuardian.get(), config.guardianBorderWidth(), talismanGuardianInfo.getColor(config), config.guardianOutlineFeather());
+                }
                 OverlayUtil.renderImageLocation(client, graphics, talismanGuardian.get().getLocalLocation(), talismanGuardianInfo.getTalismanImage(itemManager), RUNE_IMAGE_OFFSET);
             }
         }
