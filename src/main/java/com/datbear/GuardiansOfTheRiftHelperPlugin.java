@@ -53,7 +53,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private GuardiansOfTheRiftHelperStartTimerOverlay startTimerOverlay;
 
 	@Inject
-	private GuardiansOfTheRiftHelperInactivePortalOverlay inactivePortalOverlay;
+	private GuardiansOfTheRiftHelperPortalOverlay portalOverlay;
 
 	@Inject
 	private Notifier notifier;
@@ -184,7 +184,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		overlayManager.add(overlay);
 		overlayManager.add(panel);
 		overlayManager.add(startTimerOverlay);
-		overlayManager.add(inactivePortalOverlay);
+		overlayManager.add(portalOverlay);
 		isInMinigame = true;
 		expandCardinal.put("S",  "south");
 		expandCardinal.put("SW", "south west");
@@ -201,7 +201,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		overlayManager.remove(overlay);
 		overlayManager.remove(panel);
 		overlayManager.remove(startTimerOverlay);
-		overlayManager.remove(inactivePortalOverlay);
+		overlayManager.remove(portalOverlay);
 		reset();
 	}
 
