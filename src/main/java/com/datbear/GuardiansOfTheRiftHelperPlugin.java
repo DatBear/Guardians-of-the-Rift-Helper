@@ -81,11 +81,11 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 
 	private static final int GUARDIAN_ACTIVE_ANIM = 9363;
 
-	private static final int PARENT_WIDGET_ID = 48889857;
+	private static final int PARENT_WIDGET_ID = 48889858;
 	private static final int CATALYTIC_RUNE_WIDGET_ID = 48889876;
 	private static final int ELEMENTAL_RUNE_WIDGET_ID = 48889879;
 	private static final int GUARDIAN_COUNT_WIDGET_ID = 48889886;
-	private static final int PORTAL_WIDGET_ID = 48889884;
+	private static final int PORTAL_WIDGET_ID = 48889882;
 
 	private final static int PORTAL_SPRITE_ID = 4368;
 
@@ -159,7 +159,18 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 	private boolean areGuardiansNeeded = false;
 	private int entryBarrierClickCooldown = 0;
 
-	private final Map<String, String> expandCardinal = new HashMap<>();
+	private final Map<String, String> expandCardinal = new HashMap<>(){
+		{
+			put("S",  "south");
+			put("SW", "south west");
+			put("W",  "west");
+			put("NW", "north west");
+			put("N",  "north");
+			put("NE", "north east");
+			put("E",  "east");
+			put("SE", "south east");
+		}
+	};
 
 	private boolean checkInMinigame() {
 		GameState gameState = client.getGameState();
@@ -186,14 +197,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		overlayManager.add(startTimerOverlay);
 		overlayManager.add(portalOverlay);
 		isInMinigame = true;
-		expandCardinal.put("S",  "south");
-		expandCardinal.put("SW", "south west");
-		expandCardinal.put("W",  "west");
-		expandCardinal.put("NW", "north west");
-		expandCardinal.put("N",  "north");
-		expandCardinal.put("NE", "north east");
-		expandCardinal.put("E",  "east");
-		expandCardinal.put("SE", "south east");
+
 	}
 
 	@Override
