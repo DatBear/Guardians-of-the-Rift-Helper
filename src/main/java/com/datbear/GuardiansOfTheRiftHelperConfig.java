@@ -104,6 +104,17 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
     }
 
     @ConfigItem(
+            keyName = "outlineDepositPool",
+            name = "Outline deposit pool",
+            description = "Outlines the Deposit Pool when you have runes in your inventory.",
+            section = outlines
+    )
+    default boolean outlineDepositPool()
+    {
+        return true;
+    }
+
+    @ConfigItem(
             keyName = "outlineGreatGuardian",
             name = "Outline Great Guardian",
             description = "Outlines the Great Guardian when you have elemental or catalytic essence in your inventory.",
