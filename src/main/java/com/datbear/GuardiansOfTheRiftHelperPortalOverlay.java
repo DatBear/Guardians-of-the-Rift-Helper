@@ -4,28 +4,30 @@ import net.runelite.api.Client;
 import net.runelite.api.widgets.Widget;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.ui.overlay.Overlay;
+import net.runelite.client.ui.overlay.OverlayLayer;
+import net.runelite.client.ui.overlay.OverlayPriority;
 import net.runelite.client.util.ImageUtil;
 
 import javax.inject.Inject;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
-public class GuardiansOfTheRiftHelperInactivePortalOverlay extends Overlay {
+public class GuardiansOfTheRiftHelperPortalOverlay extends Overlay {
     private Client client;
     private GuardiansOfTheRiftHelperPlugin plugin;
     private GuardiansOfTheRiftHelperConfig config;
     private SpriteManager spriteManager;
 
     @Inject
-    public GuardiansOfTheRiftHelperInactivePortalOverlay(Client client, GuardiansOfTheRiftHelperPlugin plugin, GuardiansOfTheRiftHelperConfig config, SpriteManager spriteManager) {
+    public GuardiansOfTheRiftHelperPortalOverlay(Client client, GuardiansOfTheRiftHelperPlugin plugin, GuardiansOfTheRiftHelperConfig config, SpriteManager spriteManager) {
         super(plugin);
         this.client = client;
         this.plugin = plugin;
         this.config = config;
         this.spriteManager = spriteManager;
+        setLayer(OverlayLayer.ABOVE_SCENE);
     }
 
     @Override
@@ -45,41 +47,35 @@ public class GuardiansOfTheRiftHelperInactivePortalOverlay extends Overlay {
             return null;
         }
 
-        if (parentWidget.isHidden()) {
+        if (parentWidget.isHidden() || !portalWidget.isHidden()) {
             return null;
         }
 
-        if (!portalWidget.isHidden()) {
-            return null;
-        }
+        var image = ImageUtil.grayscaleImage(spriteManager.getSprite(plugin.getPortalSpriteId(), 0));
 
-        BufferedImage image = spriteManager.getSprite(plugin.getPortalSpriteId(), 0);
-        image = ImageUtil.grayscaleImage(image);
-
-        int x = 189;
-        int y = 70;
-        int width = 32;
-        int height = 32;
+        var x = (int)parentWidget.getRelativeX() + portalWidget.getRelativeX() + 16;
+        var y = (int)parentWidget.getRelativeY() + portalWidget.getRelativeY() + 10;
+        var width = 32;
+        var height = 32;
 
         graphics.drawImage(image, x, y, width, height, null);
 
-        Optional<Instant> despawn = plugin.getLastPortalDespawnTime();
-
+        Optional<Instant> lastDespawnTime = plugin.getLastPortalDespawnTime();
         // simulates the delay that the widget has for the initial text
         if (plugin.isFirstPortal())
         {
-            int timeSincePortalMillis = despawn.isPresent() ? ((int)(ChronoUnit.MILLIS.between(despawn.get(), Instant.now()))) : 0;
+            var timeSincePortalMillis = lastDespawnTime.isPresent() ? ((int)(ChronoUnit.MILLIS.between(lastDespawnTime.get(), Instant.now()))) : 0;
             if (timeSincePortalMillis < 1200) {
                 return null;
             }
         }
 
-        int timeSincePortal = despawn.isPresent() ? ((int)(ChronoUnit.SECONDS.between(despawn.get(), Instant.now()))) : 0;
+        var timeSincePortal = lastDespawnTime.isPresent() ? ((int)(ChronoUnit.SECONDS.between(lastDespawnTime.get(), Instant.now()))) : 0;
         String mins = String.format("%01d", timeSincePortal / 60);
         String secs = String.format("%02d", timeSincePortal % 60);
         String text = mins + ":" + secs;
 
-        int textHeight = 24;
+        var textHeight = 24;
         Rectangle rect = new Rectangle(x, y + height, width, textHeight);
 
         plugin.drawCenteredString(graphics, text, rect);
