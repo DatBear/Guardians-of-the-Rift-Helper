@@ -115,7 +115,9 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
             Color color = info.getColor(config);
             graphics.setColor(color);
 
-            modelOutlineRenderer.drawOutline(guardian, 2, color, 2);
+            if (config.guardianOutline()) {
+                modelOutlineRenderer.drawOutline(guardian, config.guardianBorderWidth(), color, config.guardianOutlineFeather());
+            }
 
             BufferedImage img = info.getRuneImage(itemManager);
             OverlayUtil.renderImageLocation(client, graphics, guardian.getLocalLocation(), img, RUNE_IMAGE_OFFSET);
@@ -137,7 +139,9 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
 
             if(talismanGuardian.isPresent() && activeGuardians.stream().noneMatch(x -> x.getId() == talismanGuardian.get().getId())) {
                 GuardianInfo talismanGuardianInfo = GUARDIAN_INFO.get(talismanGuardian.get().getId());
-                modelOutlineRenderer.drawOutline(talismanGuardian.get(), 2, talismanGuardianInfo.getColor(config), 2);
+                if (config.guardianOutline()) {
+                    modelOutlineRenderer.drawOutline(talismanGuardian.get(), config.guardianBorderWidth(), talismanGuardianInfo.getColor(config), config.guardianOutlineFeather());
+                }
                 OverlayUtil.renderImageLocation(client, graphics, talismanGuardian.get().getLocalLocation(), talismanGuardianInfo.getTalismanImage(itemManager), RUNE_IMAGE_OFFSET);
             }
         }
