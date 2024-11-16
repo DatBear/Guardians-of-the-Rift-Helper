@@ -445,7 +445,9 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin
 		greatGuardian = null;
 		catalyticEssencePile = null;
 		elementalEssencePile = null;
+		if(isInMinigame || isInMainRegion){
 		client.clearHintArrow();
+	}
 	}
 
 	@Provides
