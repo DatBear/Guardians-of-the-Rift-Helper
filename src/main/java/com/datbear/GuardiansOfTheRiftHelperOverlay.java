@@ -99,6 +99,36 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
         }
     }
 
+    private CellType bestCell(final Set<GameObject> activeGuardians) {
+        CellType best = CellType.Weak;
+        for (final GameObject guardian : activeGuardians) {
+            if(guardian == null) continue;
+            Shape hull = guardian.getConvexHull();
+            if(hull == null) continue;
+            GuardianInfo info = GUARDIAN_INFO.get(guardian.getId());
+
+            if (info.cellType.compareTo(best) > 0 && info.levelRequired < client.getBoostedSkillLevel(Skill.RUNECRAFT)) {
+                if (info.cellType == CellType.Overcharged) {
+                    return CellType.Overcharged;
+                }
+                best = info.cellType;
+            }
+        }
+        return best;
+    }
+
+    private PointBalance currentBalance() {
+        PointBalance val = PointBalance.BALANCED;
+        final int potElementalPoints = plugin.potentialPointsElemental();
+        final int potCatalyticPoints = plugin.potentialPointsCatalytic();
+        if (potElementalPoints > potCatalyticPoints) {
+            val = PointBalance.NEED_CATALYTIC;
+        } else if (potCatalyticPoints > potElementalPoints) {
+            val = PointBalance.NEED_ELEMENTAL;
+        }
+        return val;
+    }
+
     private void renderActiveGuardians(Graphics2D graphics){
         if(!plugin.isInMainRegion()) return;
 
@@ -106,12 +136,36 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
         Set<GameObject> guardians = plugin.getGuardians();
         Set<Integer> inventoryTalismans = plugin.getInventoryTalismans();
 
+        PointBalance balance = PointBalance.BALANCED;
+        CellType bestCell = null;
+
+        if (config.pointBalanceHelper()) {
+            balance = currentBalance();
+        }
+
+
         for(GameObject guardian : activeGuardians) {
             if(guardian == null) continue;
             Shape hull = guardian.getConvexHull();
             if(hull == null) continue;
 
             GuardianInfo info = GUARDIAN_INFO.get(guardian.getId());
+
+            if (config.pointBalanceHelper()) {
+                if (!info.isCatalytic && balance == PointBalance.NEED_CATALYTIC) {
+                    continue;
+                } else if (info.isCatalytic && balance == PointBalance.NEED_ELEMENTAL) {
+                    continue;
+                } else if (balance == PointBalance.BALANCED) {
+                    if (bestCell == null) {
+                        bestCell = bestCell(activeGuardians);
+                    }
+                    if (info.cellType != bestCell) {
+                        continue;
+                    }
+                }
+            }
+
             Color color = info.getColor(config);
             graphics.setColor(color);
 

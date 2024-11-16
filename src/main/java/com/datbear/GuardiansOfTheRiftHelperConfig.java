@@ -114,6 +114,14 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
         return true;
     }
 
+    @ConfigItem(
+            keyName = "pointBalanceHelper",
+            name = "Balance Helper",
+            description = "Highlights the guardian needed to keep points balanced or highest tier",
+            section = outlines
+    )
+    default boolean pointBalanceHelper() { return false; }
+
 
     @ConfigItem(
             keyName = "quickPassCooldown",
