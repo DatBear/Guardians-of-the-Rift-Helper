@@ -1,6 +1,5 @@
 package com.datbear;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.Provides;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -150,6 +149,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
     @Getter(AccessLevel.PACKAGE)
     private int lastRewardUsage;
 
+    private int previousGuardianFragments = 0;
+
 
     private String portalLocation;
     private int lastElementalRuneSprite;
@@ -221,6 +222,18 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
         if (invTalismans.stream().count() != inventoryTalismans.stream().count()) {
             inventoryTalismans.clear();
             inventoryTalismans.addAll(invTalismans);
+        }
+
+        if (config.notifyGuardianFragments() && config.guardianFragmentsAmount() > 0) {
+            log.info("notify: {}, amt: {}", config.notifyGuardianFragments(), config.guardianFragmentsAmount());
+            var optNewFragments = Arrays.stream(items).filter(x -> x.getId() == ItemID.GUARDIAN_FRAGMENTS).findFirst();
+            if (optNewFragments.isPresent()) {
+                var quantity = optNewFragments.get().getQuantity();
+                if (quantity >= config.guardianFragmentsAmount() && previousGuardianFragments < config.guardianFragmentsAmount()) {
+                    notifier.notify("You have mined at least " + config.guardianFragmentsAmount() + " guardian fragments.");
+                }
+                previousGuardianFragments = quantity;
+            }
         }
     }
 
@@ -311,7 +324,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
                 if (optionalGuardian.isPresent()) {
                     var currentGuardian = optionalGuardian.get();
                     currentGuardian.spawn();
-                    if(currentGuardian.notifyFunc.apply(config)){
+                    if (currentGuardian.notifyFunc.apply(config)) {
                         notifier.notify("A portal to the " + currentGuardian.name + " altar has opened.");
                     }
                 }

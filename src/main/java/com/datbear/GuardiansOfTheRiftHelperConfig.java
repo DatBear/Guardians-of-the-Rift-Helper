@@ -32,12 +32,20 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     String style = "style";
 
     @ConfigSection(
-            name = "Notifications",
+            name = "General Notifications",
             closedByDefault = true,
             position = 3,
             description = "Choose when you are notified."
     )
-    String notifications = "notifications";
+    String generalNotifications = "generalNotifications";
+
+    @ConfigSection(
+            name = "Guardian Active Notifications",
+            closedByDefault = true,
+            position = 4,
+            description = "Choose when you are notified about guardians becoming active."
+    )
+    String guardianNotifications = "notifications";
 
 
     @ConfigItem(
@@ -315,10 +323,32 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             name = "Notify on portal spawn",
             description = "Notifies you when a portal spawns.",
             position = 0,
-            section = notifications
+            section = generalNotifications
     )
     default boolean notifyPortalSpawn() {
         return true;
+    }
+
+    @ConfigItem(
+            keyName = "notifyGuardianFragments",
+            name = "Notify on Guardian Fragments",
+            description = "Notifies you after you mine the specified amount of guardian fragments.",
+            position = 1,
+            section = generalNotifications
+    )
+    default boolean notifyGuardianFragments() {
+        return true;
+    }
+
+    @ConfigItem(
+            keyName = "guardianFragmentsAmount",
+            name = "Guardian Fragments",
+            description = "Notifies you when you hit the specified amount of guardian fragments in your inventory.",
+            position = 2,
+            section = generalNotifications
+    )
+    default int guardianFragmentsAmount() {
+        return 0;
     }
 
     @ConfigItem(
@@ -326,7 +356,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             name = "Notify on Air Guardian",
             description = "Notifies you when an air guardian opens.",
             position = 1,
-            section = notifications
+            section = guardianNotifications
     )
     default boolean notifyAirGuardian() {
         return false;
@@ -337,7 +367,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             name = "Notify on Mind Guardian",
             description = "Notifies you when an mind guardian opens.",
             position = 2,
-            section = notifications
+            section = guardianNotifications
     )
     default boolean notifyMindGuardian() {
         return false;
@@ -348,7 +378,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             name = "Notify on Water Guardian",
             description = "Notifies you when a water guardian opens.",
             position = 3,
-            section = notifications
+            section = guardianNotifications
     )
     default boolean notifyWaterGuardian() {
         return false;
@@ -359,7 +389,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             name = "Notify on Earth Guardian",
             description = "Notifies you when an earth guardian opens.",
             position = 4,
-            section = notifications
+            section = guardianNotifications
     )
     default boolean notifyEarthGuardian() {
         return false;
@@ -370,7 +400,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             name = "Notify on Fire Guardian",
             description = "Notifies you when a fire guardian opens.",
             position = 5,
-            section = notifications
+            section = guardianNotifications
     )
     default boolean notifyFireGuardian() {
         return false;
@@ -381,7 +411,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             name = "Notify on Body Guardian",
             description = "Notifies you when a body guardian opens.",
             position = 6,
-            section = notifications
+            section = guardianNotifications
     )
     default boolean notifyBodyGuardian() {
         return false;
@@ -392,7 +422,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             name = "Notify on Cosmic Guardian",
             description = "Notifies you when a cosmic guardian opens.",
             position = 7,
-            section = notifications
+            section = guardianNotifications
     )
     default boolean notifyCosmicGuardian() {
         return false;
@@ -403,7 +433,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             name = "Notify on Chaos Guardian",
             description = "Notifies you when a chaos guardian opens.",
             position = 8,
-            section = notifications
+            section = guardianNotifications
     )
     default boolean notifyChaosGuardian() {
         return false;
@@ -414,7 +444,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             name = "Notify on Nature Guardian",
             description = "Notifies you when a nature guardian opens.",
             position = 9,
-            section = notifications
+            section = guardianNotifications
     )
     default boolean notifyNatureGuardian() {
         return false;
@@ -425,7 +455,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             name = "Notify on Law Guardian",
             description = "Notifies you when a law guardian opens.",
             position = 10,
-            section = notifications
+            section = guardianNotifications
     )
     default boolean notifyLawGuardian() {
         return false;
@@ -436,7 +466,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             name = "Notify on Death Guardian",
             description = "Notifies you when a death guardian opens.",
             position = 11,
-            section = notifications
+            section = guardianNotifications
     )
     default boolean notifyDeathGuardian() {
         return false;
@@ -447,7 +477,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             name = "Notify on Blood Guardian",
             description = "Notifies you when a blood guardian opens.",
             position = 12,
-            section = notifications
+            section = guardianNotifications
     )
     default boolean notifyBloodGuardian() {
         return false;
