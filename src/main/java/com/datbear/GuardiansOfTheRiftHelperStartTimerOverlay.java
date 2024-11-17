@@ -2,6 +2,7 @@ package com.datbear;
 
 import net.runelite.api.Client;
 import net.runelite.client.ui.overlay.Overlay;
+import net.runelite.client.ui.overlay.OverlayLayer;
 
 import javax.inject.Inject;
 import java.awt.*;
@@ -20,6 +21,7 @@ public class GuardiansOfTheRiftHelperStartTimerOverlay extends Overlay {
         this.client = client;
         this.plugin = plugin;
         this.config = config;
+        setLayer(OverlayLayer.ABOVE_SCENE);
     }
 
     @Override
@@ -37,22 +39,22 @@ public class GuardiansOfTheRiftHelperStartTimerOverlay extends Overlay {
         if (gameStart.isPresent()) {
             int timeToStart = ((int) ChronoUnit.SECONDS.between(Instant.now(), gameStart.get()));
 
-            // fix for showing negative time
             if (timeToStart < 0) {
                 return null;
             }
 
-            String mins = String.format("%01d", timeToStart / 60);
-            String secs = String.format("%02d", timeToStart % 60);
-            String text = mins + ":" + secs;
+            String startString = String.format("%02d", timeToStart % 60) + " seconds to game start";
 
-            int x = 68;
-            int y = 23;
-            int width = 32;
-            int height = 24;
-            Rectangle rect = new Rectangle(x, y + height, width, height);
+            var parentWidget = client.getWidget(plugin.getParentWidgetId());
+            var portalWidget = client.getWidget(plugin.getPortalWidgetId());
+            var x = parentWidget.getRelativeX() + 16;
+            var y = parentWidget.getRelativeY() + portalWidget.getRelativeY() + 60;
 
-            plugin.drawCenteredString(graphics, text, rect);
+            int width = 180;
+            int height = 15;
+
+            Rectangle rect = new Rectangle(x, y, width, height);
+            plugin.drawCenteredString(graphics, startString, rect, Optional.empty());
         }
 
         return null;
