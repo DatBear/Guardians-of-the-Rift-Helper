@@ -7,9 +7,17 @@ import java.awt.*;
 @ConfigGroup("guardiansOfTheRiftHelper")
 public interface GuardiansOfTheRiftHelperConfig extends Config {
     @ConfigSection(
+            name = "General Notifications",
+            closedByDefault = false,
+            position = 0,
+            description = "Choose when you are notified."
+    )
+    String generalNotifications = "generalNotifications";
+
+    @ConfigSection(
             name = "Outlines",
             description = "All options relating to colored outlines",
-            position = 0,
+            position = 1,
             closedByDefault = true
     )
     String outlines = "outlines";
@@ -17,7 +25,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     @ConfigSection(
             name = "Overlays",
             description = "All options relating to overlays",
-            position = 1,
+            position = 2,
             closedByDefault = true
 
     )
@@ -26,18 +34,10 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     @ConfigSection(
             name = "Guardian Render Style",
             closedByDefault = true,
-            position = 2,
+            position = 3,
             description = "Highlighting style"
     )
     String style = "style";
-
-    @ConfigSection(
-            name = "General Notifications",
-            closedByDefault = true,
-            position = 3,
-            description = "Choose when you are notified."
-    )
-    String generalNotifications = "generalNotifications";
 
     @ConfigSection(
             name = "Guardian Active Notifications",
@@ -45,7 +45,89 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             position = 4,
             description = "Choose when you are notified about guardians becoming active."
     )
-    String guardianNotifications = "notifications";
+    String guardianNotifications = "guardianNotifications";
+
+    @ConfigItem(
+            keyName = "portalSpawn",
+            name = "Notify on portal spawn",
+            description = "Notifies you when a portal spawns.",
+            position = 0,
+            section = generalNotifications
+    )
+    default boolean notifyPortalSpawn() {
+        return true;
+    }
+
+    @ConfigItem(
+            keyName = "notifyBeforeGame",
+            name = "Notify before game start",
+            description = "Notifies you the specified number of seconds before the next game starts.",
+            position = 1,
+            section = generalNotifications
+    )
+    default boolean notifyBeforeGameStart() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "beforeGameSeconds",
+            name = "Before game seconds",
+            description = "Notifies you this many seconds before the next game starts.",
+            position = 2,
+            section = generalNotifications
+    )
+    @Range(min = 0, max = 59)
+    default int beforeGameStartSeconds() {
+        return 0;
+    }
+
+    @ConfigItem(
+            keyName = "notifyBeforeFirstAltar",
+            name = "Notify before first altar",
+            description = "Notifies you the specified number of seconds before the game's first altar opens.",
+            position = 3,
+            section = generalNotifications
+    )
+    @Range(min = 0, max = 119)
+    default boolean notifyBeforeFirstAltar() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "beforeFirstAltarSeconds",
+            name = "First altar seconds",
+            description = "Notifies you this many seconds before the game's first altar opens.",
+            position = 4,
+            section = generalNotifications
+    )
+    @Range(min = 0, max = 59)
+    default int beforeFirstAltarSeconds() {
+        return 0;
+    }
+
+
+
+    @ConfigItem(
+            keyName = "notifyGuardianFragments",
+            name = "Notify on Guardian Fragments",
+            description = "Notifies you after you mine the specified amount of guardian fragments.",
+            position = 4,
+            section = generalNotifications
+    )
+    default boolean notifyGuardianFragments() {
+        return true;
+    }
+
+    @ConfigItem(
+            keyName = "guardianFragmentsAmount",
+            name = "Guardian Fragments",
+            description = "Notifies you when you hit the specified amount of guardian fragments in your inventory.",
+            position = 5,
+            section = generalNotifications
+    )
+    default int guardianFragmentsAmount() {
+        return 0;
+    }
 
 
     @ConfigItem(
@@ -315,40 +397,6 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     )
     default Color potentialBalanceColor() {
         return Color.GREEN;
-    }
-
-
-    @ConfigItem(
-            keyName = "portalSpawn",
-            name = "Notify on portal spawn",
-            description = "Notifies you when a portal spawns.",
-            position = 0,
-            section = generalNotifications
-    )
-    default boolean notifyPortalSpawn() {
-        return true;
-    }
-
-    @ConfigItem(
-            keyName = "notifyGuardianFragments",
-            name = "Notify on Guardian Fragments",
-            description = "Notifies you after you mine the specified amount of guardian fragments.",
-            position = 1,
-            section = generalNotifications
-    )
-    default boolean notifyGuardianFragments() {
-        return true;
-    }
-
-    @ConfigItem(
-            keyName = "guardianFragmentsAmount",
-            name = "Guardian Fragments",
-            description = "Notifies you when you hit the specified amount of guardian fragments in your inventory.",
-            position = 2,
-            section = generalNotifications
-    )
-    default int guardianFragmentsAmount() {
-        return 0;
     }
 
     @ConfigItem(
