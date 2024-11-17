@@ -157,7 +157,7 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
             if(config.guardianShowRuneIcons()){
                 OverlayUtil.renderImageLocation(client, graphics, guardian.getLocalLocation(), img, RUNE_IMAGE_OFFSET);
             }
-            
+
             if(!info.spawnTime.isPresent()) continue;
 
             var imgLocation = Perspective.getCanvasImageLocation(client, guardian.getLocalLocation(), img, RUNE_IMAGE_OFFSET);

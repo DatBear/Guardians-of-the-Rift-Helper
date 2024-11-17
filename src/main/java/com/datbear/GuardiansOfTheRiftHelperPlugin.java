@@ -497,7 +497,6 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
 
         var start = nextGameStart.get();
         var secondsToStart = ChronoUnit.SECONDS.between(Instant.now(), start) - .5d;
-        log.info("seconds to start: {}", secondsToStart);
         if (secondsToStart < config.beforeGameStartSeconds()) {
             if (config.beforeGameStartSeconds() > 0) {
                 notifier.notify("The next game is starting in " + config.beforeGameStartSeconds() + " seconds!");
