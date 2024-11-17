@@ -17,6 +17,7 @@ import net.runelite.client.ui.overlay.OverlayManager;
 import javax.inject.Inject;
 import java.awt.*;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 @PluginDescriptor(
         name = "Guardians of the Rift Helper",
         description = "Show info about the Guardians of the Rift minigame",
-        tags = {"minigame", "overlay", "guardians of the rift"}
+        tags = {"minigame", "overlay", "guardians of the rift", "gotr"}
 )
 public class GuardiansOfTheRiftHelperPlugin extends Plugin {
     @Inject
@@ -146,9 +147,13 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
     private Optional<Instant> lastPortalDespawnTime = Optional.empty();
     @Getter(AccessLevel.PACKAGE)
     private Optional<Instant> nextGameStart = Optional.empty();
+    private Optional<Instant> gameStarted = Optional.empty();
+
     @Getter(AccessLevel.PACKAGE)
     private int lastRewardUsage;
 
+    private boolean hasNotifiedGameStart = true;
+    private boolean hasNotifiedFirstRift = true;
     private int previousGuardianFragments = 0;
 
 
@@ -225,7 +230,6 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
         }
 
         if (config.notifyGuardianFragments() && config.guardianFragmentsAmount() > 0) {
-            log.info("notify: {}, amt: {}", config.notifyGuardianFragments(), config.guardianFragmentsAmount());
             var optNewFragments = Arrays.stream(items).filter(x -> x.getId() == ItemID.GUARDIAN_FRAGMENTS).findFirst();
             if (optNewFragments.isPresent()) {
                 var quantity = optNewFragments.get().getQuantity();
@@ -241,6 +245,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
     public void onGameTick(GameTick tick) {
         isInMinigame = checkInMinigame();
         isInMainRegion = checkInMainRegion();
+        NotifyBeforeGameStart();
+        NotifyBeforeFirstAltar();
         if (entryBarrierClickCooldown > 0) {
             entryBarrierClickCooldown--;
         }
@@ -418,7 +424,9 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
         if (msg.contains("The rift becomes active!")) {
             lastPortalDespawnTime = Optional.of(Instant.now());
             nextGameStart = Optional.empty();
+            gameStarted = Optional.of(Instant.now());
             isFirstPortal = true;
+            hasNotifiedFirstRift = false;
         } else if (msg.contains("The rift will become active in 30 seconds.")) {
             nextGameStart = Optional.of(Instant.now().plusSeconds(30));
         } else if (msg.contains("The rift will become active in 10 seconds.")) {
@@ -426,6 +434,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
         } else if (msg.contains("The rift will become active in 5 seconds.")) {
             nextGameStart = Optional.of(Instant.now().plusSeconds(5));
         } else if (msg.contains("The Portal Guardians will keep their rifts open for another 30 seconds.")) {
+            hasNotifiedGameStart = false;
             nextGameStart = Optional.of(Instant.now().plusSeconds(60));
         } else if (msg.contains("You found some loot:")) {
             elementalRewardPoints--;
@@ -480,6 +489,38 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
         }
         if (config.muteApprentices()) {
             event.getActor().setOverheadText(" ");
+        }
+    }
+
+    private void NotifyBeforeGameStart() {
+        if (hasNotifiedGameStart || !nextGameStart.isPresent() || !config.notifyBeforeGameStart()) return;
+
+        var start = nextGameStart.get();
+        var secondsToStart = ChronoUnit.SECONDS.between(Instant.now(), start) - .5d;
+        log.info("seconds to start: {}", secondsToStart);
+        if (secondsToStart < config.beforeGameStartSeconds()) {
+            if (config.beforeGameStartSeconds() > 0) {
+                notifier.notify("The next game is starting in " + config.beforeGameStartSeconds() + " seconds!");
+            } else {
+                notifier.notify("The next game is starting now!");
+            }
+            hasNotifiedGameStart = true;
+        }
+    }
+
+    private void NotifyBeforeFirstAltar() {
+        if (hasNotifiedFirstRift || !gameStarted.isPresent() || !config.notifyBeforeFirstAltar()) return;
+
+        var start = gameStarted.get();
+        var secondsToRift = ChronoUnit.SECONDS.between(Instant.now(), start.plusSeconds(120)) - .5d;
+
+        if (secondsToRift < config.beforeFirstAltarSeconds()) {
+            if (config.beforeFirstAltarSeconds() > 0) {
+                notifier.notify("The first altar is in " + config.beforeFirstAltarSeconds() + " seconds!");
+            } else {
+                notifier.notify("The first altar is opening now!");
+            }
+            hasNotifiedFirstRift = true;
         }
     }
 
