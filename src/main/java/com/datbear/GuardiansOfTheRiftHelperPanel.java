@@ -30,40 +30,34 @@ public class GuardiansOfTheRiftHelperPanel extends OverlayPanel {
         getMenuEntries().add(new OverlayMenuEntry(RUNELITE_OVERLAY_CONFIG, OPTION_CONFIGURE, "Guardians of the Rift Helper Overlay"));
     }
 
-	private int potentialPoints(int savedPoints, int currentPoints)
-	{
-		if (currentPoints == 0){
-			return savedPoints;
-		}
-		return savedPoints += currentPoints / 100;
-	}
 
     @Override
     public Dimension render(Graphics2D graphics)
     {
-        if((!plugin.isInMainRegion() && !plugin.isInMinigame()) || !config.showOverlay()){
+        if((!plugin.isInMainRegion() && !plugin.isInMinigame()) || !config.showPointsOverlay()){
             return null;
         }
 
-        Optional<Instant> gameStart = plugin.getNextGameStart();
-
-        if(gameStart.isPresent()){
-            int timeToStart = ((int)ChronoUnit.SECONDS.between(Instant.now(), gameStart.get()));
-            panelComponent.getChildren().add(LineComponent.builder()
-                    .left("Time to start:")
-                    .right(""+timeToStart)
-                    .build());
-        } else{
-            Optional<Instant> despawn = plugin.getLastPortalDespawnTime();
-            int timeSincePortal = despawn.isPresent() ? ((int)(ChronoUnit.SECONDS.between(despawn.get(), Instant.now()))) : 0;
-            panelComponent.getChildren().add(LineComponent.builder()
-                    .left("Time since portal:")
-                    .right(""+timeSincePortal)
-                    .rightColor(plugin.getTimeSincePortalColor(timeSincePortal))
-                    .build());
-        }
-
-
+		Optional<Instant> gameStart = plugin.getNextGameStart();
+		if(gameStart.isPresent()) {
+			if(config.startTimerOverlayLocation() == TimerOverlayLocation.InfoBox || config.startTimerOverlayLocation() == TimerOverlayLocation.Both){
+				int timeToStart = ((int)ChronoUnit.SECONDS.between(Instant.now(), gameStart.get()));
+				panelComponent.getChildren().add(LineComponent.builder()
+						.left("Time to start:")
+						.right(""+timeToStart)
+						.build());
+			}
+		} else {
+			if(config.inactivePortalOverlayLocation() == TimerOverlayLocation.InfoBox || config.inactivePortalOverlayLocation() == TimerOverlayLocation.Both){
+				Optional<Instant> despawn = plugin.getLastPortalDespawnTime();
+				int timeSincePortal = despawn.isPresent() ? ((int)(ChronoUnit.SECONDS.between(despawn.get(), Instant.now()))) : 0;
+				panelComponent.getChildren().add(LineComponent.builder()
+						.left("Time since portal:")
+						.right(""+timeSincePortal)
+						.rightColor(plugin.getTimeSincePortalColor(timeSincePortal))
+						.build());
+			}
+		}
 
         panelComponent.getChildren().add(LineComponent.builder()
                         .left("Reward points:")
@@ -72,8 +66,8 @@ public class GuardiansOfTheRiftHelperPanel extends OverlayPanel {
 
 		if (config.potentialPoints())
 		{
-			final int potElementalPoints = potentialPoints(plugin.getElementalRewardPoints(), plugin.getCurrentElementalRewardPoints());
-			final int potCatalyticPoints = potentialPoints(plugin.getCatalyticRewardPoints(), plugin.getCurrentCatalyticRewardPoints());
+			final int potElementalPoints = plugin.potentialPointsElemental();
+			final int potCatalyticPoints = plugin.potentialPointsCatalytic();
 			final int elementalRemain = plugin.getCurrentElementalRewardPoints() % 100;
 			final int catalyticRemain = plugin.getCurrentCatalyticRewardPoints() % 100;
 			final String potPoints = String.format("%d.%02d/%d.%02d", potElementalPoints, elementalRemain, potCatalyticPoints, catalyticRemain);
