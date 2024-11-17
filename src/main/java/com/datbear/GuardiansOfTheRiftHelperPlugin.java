@@ -406,14 +406,14 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
 
     @Subscribe
     public void onVarbitChanged(VarbitChanged event) {
-        if (!isInMainRegion) return;
+        if (!isInMainRegion && !isInMinigame) return;
         currentElementalRewardPoints = client.getVarbitValue(13686);
         currentCatalyticRewardPoints = client.getVarbitValue(13685);
     }
 
     @Subscribe
     public void onChatMessage(ChatMessage chatMessage) {
-        if (!isInMainRegion) return;
+        if ((!isInMainRegion && !isInMinigame)) return;
         if (chatMessage.getType() != ChatMessageType.SPAM && chatMessage.getType() != ChatMessageType.GAMEMESSAGE)
             return;
 

@@ -67,12 +67,11 @@ public class GuardianInfo {
         spawnTime = Optional.empty();
     }
 
-    public Color getColor(GuardiansOfTheRiftHelperConfig config, int level){
-
+    public Color getColor(GuardiansOfTheRiftHelperConfig config, int level) {
         if (config.colorGuardiansWithInsufficientRunecraftingLevel() && levelRequired > level) {
             return config.colorGuardiansWithInsufficientRunecraftingLevelColor();
-        } else if(config.colorGuardiansByTier()){
-            switch(cellType){
+        } else if (config.colorGuardiansByTier()) {
+            switch (cellType) {
                 case Weak:
                     return config.weakGuardianColor();
                 case Medium:
