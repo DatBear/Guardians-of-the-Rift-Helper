@@ -234,7 +234,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
             if (optNewFragments.isPresent()) {
                 var quantity = optNewFragments.get().getQuantity();
                 if (quantity >= config.guardianFragmentsAmount() && previousGuardianFragments < config.guardianFragmentsAmount()) {
-                    notifier.notify("You have mined at least " + config.guardianFragmentsAmount() + " guardian fragments.");
+                    notifier.notify("You have mined " + config.guardianFragmentsAmount() + "+ guardian fragments.");
                 }
                 previousGuardianFragments = quantity;
             }
@@ -407,8 +407,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
     @Subscribe
     public void onVarbitChanged(VarbitChanged event) {
         if (!isInMainRegion && !isInMinigame) return;
-        currentElementalRewardPoints = client.getVarbitValue(13686);
-        currentCatalyticRewardPoints = client.getVarbitValue(13685);
+        currentElementalRewardPoints = Math.max(0, client.getVarbitValue(13686));
+        currentCatalyticRewardPoints = Math.max(0, client.getVarbitValue(13685));
     }
 
     @Subscribe
@@ -428,17 +428,20 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
             isFirstPortal = true;
             hasNotifiedFirstRift = false;
         } else if (msg.contains("The rift will become active in 30 seconds.")) {
+            hasNotifiedGameStart = config.beforeGameStartSeconds() > 30;
             nextGameStart = Optional.of(Instant.now().plusSeconds(30));
         } else if (msg.contains("The rift will become active in 10 seconds.")) {
             nextGameStart = Optional.of(Instant.now().plusSeconds(10));
+            hasNotifiedGameStart = config.beforeGameStartSeconds() > 10;
         } else if (msg.contains("The rift will become active in 5 seconds.")) {
             nextGameStart = Optional.of(Instant.now().plusSeconds(5));
+            hasNotifiedGameStart = config.beforeGameStartSeconds() > 5;
         } else if (msg.contains("The Portal Guardians will keep their rifts open for another 30 seconds.")) {
             hasNotifiedGameStart = false;
             nextGameStart = Optional.of(Instant.now().plusSeconds(60));
         } else if (msg.contains("You found some loot:")) {
-            elementalRewardPoints--;
-            catalyticRewardPoints--;
+            elementalRewardPoints = Math.max(0, elementalRewardPoints-1);
+            catalyticRewardPoints = Math.max(0, catalyticRewardPoints-1);
         }
 
         Matcher rewardPointMatcher = REWARD_POINT_PATTERN.matcher(msg);

@@ -36,6 +36,10 @@ public class GuardiansOfTheRiftHelperPortalOverlay extends Overlay {
             return null;
         }
 
+        if(plugin.getNextGameStart().isPresent()){
+            return null;
+        }
+
         if(config.inactivePortalOverlayLocation() != TimerOverlayLocation.GameOverlay && config.inactivePortalOverlayLocation() != TimerOverlayLocation.Both){
             return null;
         }
