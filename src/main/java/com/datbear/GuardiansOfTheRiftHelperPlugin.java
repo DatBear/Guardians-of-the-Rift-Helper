@@ -57,8 +57,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
 
     private static final int MINIGAME_MAIN_REGION = 14484;
 
-    private static final Set<Integer> GUARDIAN_IDS = ImmutableSet.of(43705, 43701, 43710, 43702, 43703, 43711, 43704, 43708, 43712, 43707, 43706, 43709, 43702);
-    private static final Set<Integer> RUNE_IDS = ImmutableSet.of(554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 4694, 4695, 4696, 4697, 4698, 4699);
+    private static final Set<Integer> GUARDIAN_IDS = GuardianInfo.ALL.stream().mapToInt(x -> x.gameObjectId).boxed().collect(Collectors.toSet());
+    private static final Set<Integer> RUNE_IDS = GuardianInfo.ALL.stream().mapToInt(x -> x.runeId).boxed().collect(Collectors.toSet());
     private static final Set<Integer> TALISMAN_IDS = GuardianInfo.ALL.stream().mapToInt(x -> x.talismanId).boxed().collect(Collectors.toSet());
     private static final int GREAT_GUARDIAN_ID = 11403;
 
@@ -83,6 +83,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
     private static final int ELEMENTAL_RUNE_WIDGET_ID = 48889879;
     private static final int GUARDIAN_COUNT_WIDGET_ID = 48889886;
     private static final int PORTAL_WIDGET_ID = 48889882;
+    private static final int PORTAL_TEXT_WIDGET_ID = 48889884;
 
     private final static int PORTAL_SPRITE_ID = 4368;
 
@@ -252,7 +253,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
         Widget elementalRuneWidget = client.getWidget(ELEMENTAL_RUNE_WIDGET_ID);
         Widget catalyticRuneWidget = client.getWidget(CATALYTIC_RUNE_WIDGET_ID);
         Widget guardianCountWidget = client.getWidget(GUARDIAN_COUNT_WIDGET_ID);
-        Widget portalWidget = client.getWidget(PORTAL_WIDGET_ID);
+        Widget portalTextWidget = client.getWidget(PORTAL_TEXT_WIDGET_ID);
 
         lastElementalRuneSprite = parseRuneWidget(elementalRuneWidget, lastElementalRuneSprite);
         lastCatalyticRuneSprite = parseRuneWidget(catalyticRuneWidget, lastCatalyticRuneSprite);
@@ -262,19 +263,19 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
             areGuardiansNeeded = text != null && !text.contains("10/10");
         }
 
-        if (portalWidget != null && !portalWidget.isHidden()) {
+        if (portalTextWidget != null && !portalTextWidget.isHidden()) {
             if (!portalSpawnTime.isPresent() && lastPortalDespawnTime.isPresent()) {
                 lastPortalDespawnTime = Optional.empty();
                 if (isFirstPortal) {
                     isFirstPortal = false;
                 }
                 if (config.notifyPortalSpawn()) {
-                    String compass = portalWidget.getText().split(" ")[0];
+                    String compass = portalTextWidget.getText().split(" ")[0];
                     String full = expandCardinal.getOrDefault(compass, "unknown");
                     notifier.notify("A portal has spawned in the " + full + ".");
                 }
             }
-            portalLocation = portalWidget.getText();
+            portalLocation = portalTextWidget.getText();
             portalSpawnTime = portalSpawnTime.isPresent() ? portalSpawnTime : Optional.of(Instant.now());
         } else if (elementalRuneWidget != null && !elementalRuneWidget.isHidden()) {
             if (portalSpawnTime.isPresent()) {
