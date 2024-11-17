@@ -150,7 +150,7 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
                 }
             }
 
-            var color = info.getColor(config);
+            var color = info.getColor(config,  client.getBoostedSkillLevel(Skill.RUNECRAFT));
             graphics.setColor(color);
 
             if (config.guardianOutline()) {
@@ -178,7 +178,7 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
             if(talismanGuardian.isPresent() && activeGuardians.stream().noneMatch(x -> x.getId() == talismanGuardian.get().getId())) {
                 var talismanGuardianInfo = getGuardianInfo(talismanGuardian.get().getId());
                 if (config.guardianOutline()) {
-                    modelOutlineRenderer.drawOutline(talismanGuardian.get(), config.guardianBorderWidth(), talismanGuardianInfo.getColor(config), config.guardianOutlineFeather());
+                    modelOutlineRenderer.drawOutline(talismanGuardian.get(), config.guardianBorderWidth(), talismanGuardianInfo.getColor(config, client.getBoostedSkillLevel(Skill.RUNECRAFT)), config.guardianOutlineFeather());
                 }
                 OverlayUtil.renderImageLocation(client, graphics, talismanGuardian.get().getLocalLocation(), talismanGuardianInfo.getTalismanImage(itemManager), RUNE_IMAGE_OFFSET);
             }

@@ -308,12 +308,33 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
         return Color.RED;
     }
 
+    @ConfigItem(
+            keyName = "colorGuardiansWithInsufficientRunecraftingLevel",
+            name = "Color guardians if Runecrafting level is insufficient",
+            description = "Outlines active portal guardians with color if the required Runecrafting level exceeds the players current Runecrafting level.",
+            position = 7,
+            section = outlines
+    )
+    default boolean colorGuardiansWithInsufficientRunecraftingLevel() { return false; }
+
+    @ConfigItem(
+            keyName = "colorGuardiansWithInsufficientRunecraftingLevelColor",
+            name = "Color that guardians get if Runecrafting level is insufficient",
+            description = "Color of the outline on the active catalytic guardian if it is too high level.",
+            position = 8,
+            section = outlines
+    )
+    default Color colorGuardiansWithInsufficientRunecraftingLevelColor()
+    {
+        return Color.RED;
+    }
+  
     @Alpha
     @ConfigItem(
             keyName = "essencePileColor",
             name = "Essence pile outline",
             description = "Color of the outline on essence piles.",
-            position = 7,
+            position = 9,
             section = outlines
     )
     default Color essencePileColor() {
@@ -324,7 +345,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "startTimerOverlayLocation",
             name = "Start Timer Overlay Location",
             description = "Toggles the start timer overlay location.",
-            position = 8,
+            position = 10,
             section = overlays
     )
     default TimerOverlayLocation startTimerOverlayLocation() {
@@ -335,7 +356,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "inactivePortalOverlayLocation",
             name = "Inactive Portal Overlay Location",
             description = "Toggles the inactive portal overlay location.",
-            position = 9,
+            position = 11,
             section = overlays
     )
     default TimerOverlayLocation inactivePortalOverlayLocation() {
@@ -346,7 +367,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "showPointsOverlay",
             name = "Show Points Overlay",
             description = "Toggles the points overlay.",
-            position = 10,
+            position = 12,
             section = overlays
     )
     default boolean showPointsOverlay() {
@@ -357,7 +378,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "potentialPoints",
             name = "Show potential points",
             description = "Show tallied up points during a game",
-            position = 11,
+            position = 13,
             section = overlays
     )
     default boolean potentialPoints() {
@@ -368,7 +389,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "highlightPotential",
             name = "Highlight potential points",
             description = "Highlight potential points depending on balance",
-            position = 12,
+            position = 14,
             section = overlays
     )
     default boolean highlightPotential() {
@@ -380,7 +401,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "potentialUnbalanceColor",
             name = "Unbalanced potential color",
             description = "Color to highlight potential points when unbalanced",
-            position = 13,
+            position = 15,
             section = overlays
     )
     default Color potentialUnbalanceColor() {
@@ -392,7 +413,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "potentialBalanceColor",
             name = "Balanced potential color",
             description = "Color to highlight potential points when balanced",
-            position = 14,
+            position = 16,
             section = overlays
     )
     default Color potentialBalanceColor() {
@@ -530,5 +551,4 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     default boolean notifyBloodGuardian() {
         return false;
     }
-
 }
