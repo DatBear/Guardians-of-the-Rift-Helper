@@ -51,12 +51,14 @@ public class GuardiansOfTheRiftHelperPanel extends OverlayPanel {
         } else {
             if (config.inactivePortalOverlayLocation() == TimerOverlayLocation.InfoBox || config.inactivePortalOverlayLocation() == TimerOverlayLocation.Both) {
                 Optional<Instant> despawn = plugin.getLastPortalDespawnTime();
-                int timeSincePortal = despawn.isPresent() ? ((int) (ChronoUnit.SECONDS.between(despawn.get(), Instant.now()))) : 0;
-                panelComponent.getChildren().add(LineComponent.builder()
-                        .left("Time since portal:")
-                        .right("" + timeSincePortal)
-                        .rightColor(plugin.getTimeSincePortalColor(timeSincePortal))
-                        .build());
+                var timeSincePortal = despawn.isPresent() ? ((int) (ChronoUnit.SECONDS.between(despawn.get(), Instant.now()))) : 0;
+                if (timeSincePortal >= 0) {
+                    panelComponent.getChildren().add(LineComponent.builder()
+                            .left("Time since portal:")
+                            .right("" + timeSincePortal)
+                            .rightColor(plugin.getTimeSincePortalColor(timeSincePortal))
+                            .build());
+                }
             }
         }
 
