@@ -206,7 +206,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
 
     @Subscribe
     public void onItemContainerChanged(ItemContainerChanged event) {
-        if (!isInMainRegion || event.getItemContainer() != client.getItemContainer(InventoryID.INVENTORY)) {
+        if ((!isInMainRegion && !isInMinigame) || event.getItemContainer() != client.getItemContainer(InventoryID.INVENTORY)) {
             return;
         }
 
