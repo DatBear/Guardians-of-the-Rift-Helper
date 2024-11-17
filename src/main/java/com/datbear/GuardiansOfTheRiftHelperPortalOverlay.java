@@ -40,8 +40,11 @@ public class GuardiansOfTheRiftHelperPortalOverlay extends Overlay {
             return null;
         }
 
-        Widget parentWidget = client.getWidget(plugin.getParentWidgetId());
-        Widget portalWidget = client.getWidget(plugin.getPortalWidgetId());
+        Optional<Instant> despawn = plugin.getLastPortalDespawnTime();
+        if(!despawn.isPresent()) return null;
+
+        var parentWidget = client.getWidget(plugin.getParentWidgetId());
+        var portalWidget = client.getWidget(plugin.getPortalWidgetId());
 
         if (parentWidget == null || portalWidget == null) {
             return null;
@@ -60,25 +63,25 @@ public class GuardiansOfTheRiftHelperPortalOverlay extends Overlay {
 
         graphics.drawImage(image, x, y, width, height, null);
 
-        Optional<Instant> lastDespawnTime = plugin.getLastPortalDespawnTime();
         // simulates the delay that the widget has for the initial text
         if (plugin.isFirstPortal())
         {
-            var timeSincePortalMillis = lastDespawnTime.isPresent() ? ((int)(ChronoUnit.MILLIS.between(lastDespawnTime.get(), Instant.now()))) : 0;
+            var timeSincePortalMillis = despawn.isPresent() ? ((int)(ChronoUnit.MILLIS.between(despawn.get(), Instant.now()))) : 0;
             if (timeSincePortalMillis < 1200) {
                 return null;
             }
         }
 
-        var timeSincePortal = lastDespawnTime.isPresent() ? ((int)(ChronoUnit.SECONDS.between(lastDespawnTime.get(), Instant.now()))) : 0;
-        String mins = String.format("%01d", timeSincePortal / 60);
-        String secs = String.format("%02d", timeSincePortal % 60);
-        String text = mins + ":" + secs;
+        var timeSincePortal = ((int)(ChronoUnit.SECONDS.between(despawn.get(), Instant.now())));
+        var color = plugin.getTimeSincePortalColor(timeSincePortal);
+        var mins = String.format("%01d", timeSincePortal / 60);
+        var secs = String.format("%02d", timeSincePortal % 60);
+        var text = mins + ":" + secs;
 
         var textHeight = 24;
         Rectangle rect = new Rectangle(x, y + height, width, textHeight);
 
-        plugin.drawCenteredString(graphics, text, rect);
+        plugin.drawCenteredString(graphics, text, rect, Optional.of(color));
 
         return null;
     }

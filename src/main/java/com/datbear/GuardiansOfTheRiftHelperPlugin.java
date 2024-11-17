@@ -240,13 +240,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
         for (GameObject guardian : guardians) {
             Animation animation = ((DynamicObject) guardian.getRenderable()).getAnimation();
             if (animation != null && animation.getId() == GUARDIAN_ACTIVE_ANIM) {
-                if (activeGuardians.add(guardian)) {
-                    var info = GuardianInfo.ALL.stream().filter(x -> x.gameObjectId == guardian.getId() && x.notifyFunc.apply(config)).findFirst();
-                    if (info.isPresent()) {
-                        notifier.notify("A portal to the " + info.get().name + " altar has opened.");
-                    }
-                }
-
+                activeGuardians.add(guardian);
             }
         }
 
@@ -264,7 +258,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
         }
 
         if (portalTextWidget != null && !portalTextWidget.isHidden()) {
-            if (!portalSpawnTime.isPresent() && lastPortalDespawnTime.isPresent()) {
+            if (!portalSpawnTime.isPresent()) {
                 lastPortalDespawnTime = Optional.empty();
                 if (isFirstPortal) {
                     isFirstPortal = false;
@@ -313,9 +307,13 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
                     }
                 }
 
-                Optional<GuardianInfo> currentGuardian = GuardianInfo.ALL.stream().filter(g -> g.spriteId == spriteId).findFirst();
-                if (currentGuardian.isPresent()) {
-                    currentGuardian.get().spawn();
+                Optional<GuardianInfo> optionalGuardian = GuardianInfo.ALL.stream().filter(g -> g.spriteId == spriteId).findFirst();
+                if (optionalGuardian.isPresent()) {
+                    var currentGuardian = optionalGuardian.get();
+                    currentGuardian.spawn();
+                    if(currentGuardian.notifyFunc.apply(config)){
+                        notifier.notify("A portal to the " + currentGuardian.name + " altar has opened.");
+                    }
                 }
             }
 
@@ -497,13 +495,13 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
         return PORTAL_SPRITE_ID;
     }
 
-    public void drawCenteredString(Graphics g, String text, Rectangle rect) {
+    public void drawCenteredString(Graphics g, String text, Rectangle rect, Optional<Color> textColor) {
         FontMetrics metrics = g.getFontMetrics();
         int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
         int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
         g.setColor(Color.BLACK);
         g.drawString(text, x + 1, y + 1);
-        g.setColor(Color.WHITE);
+        g.setColor(textColor.isPresent() ? textColor.get() : Color.WHITE);
         g.drawString(text, x, y);
     }
 
