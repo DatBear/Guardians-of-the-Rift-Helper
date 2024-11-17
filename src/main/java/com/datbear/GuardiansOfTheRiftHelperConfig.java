@@ -152,7 +152,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     @ConfigItem(
             keyName = "guardianOutline",
             name = "Highlight outline",
-            description = "Configures whether or not NPC should be highlighted by outline",
+            description = "Configures whether or not Guardian NPCs should be highlighted by outline.",
             section = style,
             position = 0
     )
@@ -163,7 +163,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     @ConfigItem(
             keyName = "guardianBorderWidth",
             name = "Border Width",
-            description = "Width of the highlighted NPC border",
+            description = "Width of the highlighted NPC border.",
             section = style,
             position = 1
     )
@@ -175,7 +175,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
 
             keyName = "guardianOutlineFeather",
             name = "Outline feather",
-            description = "Specify between 0-4 how much of the model outline should be faded",
+            description = "Specify between 0-4 how much of the outline should be faded.",
             section = style,
             position = 2
     )
@@ -188,7 +188,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
 
             keyName = "guardianShowRuneIcons",
             name = "Show Rune Icons",
-            description = "Toggles whether or not to show rune icons above guardians",
+            description = "Toggles whether or not to show rune icons above guardians.",
             section = style,
             position = 3
     )
