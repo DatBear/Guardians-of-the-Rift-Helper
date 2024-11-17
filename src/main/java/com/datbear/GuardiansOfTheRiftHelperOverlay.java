@@ -23,20 +23,7 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
     private static final Color GREEN = new Color(0,255,0, 150);
     private static final Color RED = new Color(255, 0, 0, 150);
 
-    public static final HashMap<Integer, GuardianInfo> GUARDIAN_INFO = new HashMap<Integer, GuardianInfo>(){{
-        put(43701, GuardianInfo.AIR);
-        put(43705, GuardianInfo.MIND);
-        put(43702, GuardianInfo.WATER);
-        put(43703, GuardianInfo.EARTH);
-        put(43704, GuardianInfo.FIRE);
-        put(43709, GuardianInfo.BODY);
-        put(43710, GuardianInfo.COSMIC);
-        put(43706, GuardianInfo.CHAOS);
-        put(43711, GuardianInfo.NATURE);
-        put(43712, GuardianInfo.LAW);
-        put(43707, GuardianInfo.DEATH);
-        put(43708, GuardianInfo.BLOOD);
-    }};
+
 
     private static final int GUARDIAN_TICK_COUNT = 33;
     private static final int PORTAL_TICK_COUNT = 43;
@@ -106,7 +93,7 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
             if(guardian == null) continue;
             Shape hull = guardian.getConvexHull();
             if(hull == null) continue;
-            GuardianInfo info = GUARDIAN_INFO.get(guardian.getId());
+            GuardianInfo info = getGuardianInfo(guardian.getId());
 
             if (info.cellType.compareTo(best) > 0 && info.levelRequired < client.getBoostedSkillLevel(Skill.RUNECRAFT)) {
                 if (info.cellType == CellType.Overcharged) {
@@ -150,7 +137,7 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
             Shape hull = guardian.getConvexHull();
             if(hull == null) continue;
 
-            GuardianInfo info = GUARDIAN_INFO.get(guardian.getId());
+            GuardianInfo info = getGuardianInfo(guardian.getId());
 
             if (config.pointBalanceHelper()) {
                 if (!info.isCatalytic && balance == PointBalance.NEED_CATALYTIC) {
@@ -190,16 +177,20 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
         }
 
         for(int talisman : inventoryTalismans){
-            Optional<GameObject> talismanGuardian = guardians.stream().filter(x -> GUARDIAN_INFO.get(x.getId()).talismanId == talisman).findFirst();
+            Optional<GameObject> talismanGuardian = guardians.stream().filter(x -> getGuardianInfo(x.getId()).talismanId == talisman).findFirst();
 
             if(talismanGuardian.isPresent() && activeGuardians.stream().noneMatch(x -> x.getId() == talismanGuardian.get().getId())) {
-                GuardianInfo talismanGuardianInfo = GUARDIAN_INFO.get(talismanGuardian.get().getId());
+                GuardianInfo talismanGuardianInfo = getGuardianInfo(talismanGuardian.get().getId());
                 if (config.guardianOutline()) {
                     modelOutlineRenderer.drawOutline(talismanGuardian.get(), config.guardianBorderWidth(), talismanGuardianInfo.getColor(config), config.guardianOutlineFeather());
                 }
                 OverlayUtil.renderImageLocation(client, graphics, talismanGuardian.get().getLocalLocation(), talismanGuardianInfo.getTalismanImage(itemManager), RUNE_IMAGE_OFFSET);
             }
         }
+    }
+
+    private GuardianInfo getGuardianInfo(int gameObjectId){
+        return GuardianInfo.ALL.stream().filter(x -> x.gameObjectId == gameObjectId).findFirst().get();
     }
 
     private void highlightGreatGuardian(Graphics2D graphics) {
