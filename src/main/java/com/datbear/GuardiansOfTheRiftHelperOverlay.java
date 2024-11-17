@@ -11,12 +11,8 @@ import net.runelite.client.ui.overlay.outline.ModelOutlineRenderer;
 
 import javax.inject.Inject;
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
-import java.util.Optional;
 import java.util.Set;
 
 public class GuardiansOfTheRiftHelperOverlay extends Overlay {
@@ -158,7 +154,10 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
             }
 
             var img = info.getRuneImage(itemManager);
-            OverlayUtil.renderImageLocation(client, graphics, guardian.getLocalLocation(), img, RUNE_IMAGE_OFFSET);
+            if(config.guardianShowRuneIcons()){
+                OverlayUtil.renderImageLocation(client, graphics, guardian.getLocalLocation(), img, RUNE_IMAGE_OFFSET);
+            }
+
             if(!info.spawnTime.isPresent()) continue;
 
             var imgLocation = Perspective.getCanvasImageLocation(client, guardian.getLocalLocation(), img, RUNE_IMAGE_OFFSET);
