@@ -5,32 +5,40 @@ import net.runelite.client.config.*;
 import java.awt.*;
 
 @ConfigGroup("guardiansOfTheRiftHelper")
-public interface GuardiansOfTheRiftHelperConfig extends Config
-{
-	@ConfigSection(
-		name = "Outlines",
-		description = "All options relating to colored outlines",
-		position =  0,
-		closedByDefault = true
-	)
-	String outlines = "outlines";
+public interface GuardiansOfTheRiftHelperConfig extends Config {
+    @ConfigSection(
+            name = "Outlines",
+            description = "All options relating to colored outlines",
+            position = 0,
+            closedByDefault = true
+    )
+    String outlines = "outlines";
 
-	@ConfigSection(
-		name = "Overlays",
-		description = "All options relating to overlays",
-		position =  1,
-		closedByDefault = true
+    @ConfigSection(
+            name = "Overlays",
+            description = "All options relating to overlays",
+            position = 1,
+            closedByDefault = true
 
-	)
-	String overlays = "overlays";
+    )
+    String overlays = "overlays";
 
     @ConfigSection(
             name = "Guardian Render Style",
             closedByDefault = true,
-            position = 0,
+            position = 2,
             description = "Highlighting style"
     )
     String style = "style";
+
+    @ConfigSection(
+            name = "Notifications",
+            closedByDefault = true,
+            position = 3,
+            description = "Choose when you are notified."
+    )
+    String notifications = "notifications";
+
 
     @ConfigItem(
             position = 1,
@@ -39,8 +47,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
             description = "Width of the highlighted NPC border",
             section = style
     )
-    default int guardianBorderWidth()
-    {
+    default int guardianBorderWidth() {
         return 2;
     }
 
@@ -55,8 +62,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
             min = 0,
             max = 4
     )
-    default int guardianOutlineFeather()
-    {
+    default int guardianOutlineFeather() {
         return 0;
     }
 
@@ -67,18 +73,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
             description = "Configures whether or not NPC should be highlighted by outline",
             section = style
     )
-    default boolean guardianOutline()
-    {
-        return true;
-    }
-
-    @ConfigItem(
-            keyName = "portalSpawn",
-            name = "Notify on portal spawn",
-            description = "Notifies you when a portal spawns."
-    )
-    default boolean notifyPortalSpawn()
-    {
+    default boolean guardianOutline() {
         return true;
     }
 
@@ -87,8 +82,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
             name = "Mute game help messages",
             description = "Mutes the over head messages of the apprentices giving game advice."
     )
-    default boolean muteApprentices()
-    {
+    default boolean muteApprentices() {
         return true;
     }
 
@@ -96,10 +90,9 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
             keyName = "outlineCellTable",
             name = "Outline cell table",
             description = "Outlines the Cell table when you have no cells remaining.",
-		section = outlines
+            section = outlines
     )
-    default boolean outlineCellTable()
-    {
+    default boolean outlineCellTable() {
         return true;
     }
 
@@ -109,8 +102,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
             description = "Outlines the Deposit Pool when you have runes in your inventory.",
             section = outlines
     )
-    default boolean outlineDepositPool()
-    {
+    default boolean outlineDepositPool() {
         return true;
     }
 
@@ -118,10 +110,9 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
             keyName = "outlineGreatGuardian",
             name = "Outline Great Guardian",
             description = "Outlines the Great Guardian when you have elemental or catalytic essence in your inventory.",
-			section = outlines
+            section = outlines
     )
-    default boolean outlineGreatGuardian()
-    {
+    default boolean outlineGreatGuardian() {
         return true;
     }
 
@@ -131,7 +122,9 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
             description = "Highlights the guardian needed to keep points balanced or highest tier",
             section = outlines
     )
-    default boolean pointBalanceHelper() { return false; }
+    default boolean pointBalanceHelper() {
+        return false;
+    }
 
 
     @ConfigItem(
@@ -139,30 +132,29 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
             name = "Add cooldown to Quick-Pass",
             description = "Adds a 3 tick delay to the Quick-Pass menu option so you don't enter/leave by spam clicking the gate with Menu Entry Swapper's quick-pass option enabled."
     )
-    default boolean quickPassCooldown()
-    {
+    default boolean quickPassCooldown() {
         return true;
     }
+
     @Alpha
     @ConfigItem(
             keyName = "elementalGuardianColor",
             name = "Elemental outline",
             description = "Color of the outline on the active elemental guardian.",
-			section = outlines
+            section = outlines
     )
-    default Color elementalGuardianColor()
-    {
+    default Color elementalGuardianColor() {
         return Color.GREEN;
     }
+
     @Alpha
     @ConfigItem(
             keyName = "catalyticGuardianColor",
             name = "Catalytic outline",
             description = "Color of the outline on the active catalytic guardian.",
-			section = outlines
+            section = outlines
     )
-    default Color catalyticGuardianColor()
-    {
+    default Color catalyticGuardianColor() {
         return Color.RED;
     }
 
@@ -172,9 +164,11 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
             name = "Color guardians by cell tier",
             description = "Outlines active portal guardians with colors based on their Cell charge tiers instead of Elemental vs Catalytic.",
             position = 2,
-			section = outlines
+            section = outlines
     )
-    default boolean colorGuardiansByTier() { return false; }
+    default boolean colorGuardiansByTier() {
+        return false;
+    }
 
     @Alpha
     @ConfigItem(
@@ -182,46 +176,45 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
             name = "Weak outline",
             description = "Color of the outline on an active weak guardian.",
             position = 3,
-			section = outlines
+            section = outlines
     )
-    default Color weakGuardianColor()
-    {
+    default Color weakGuardianColor() {
         return Color.WHITE;
     }
+
     @Alpha
     @ConfigItem(
             keyName = "mediumGuardianColor",
             name = "Medium outline",
             description = "Color of the outline on an active medium guardian.",
             position = 4,
-			section = outlines
+            section = outlines
     )
-    default Color mediumGuardianColor()
-    {
+    default Color mediumGuardianColor() {
         return Color.BLUE;
     }
+
     @Alpha
     @ConfigItem(
             keyName = "strongGuardianColor",
             name = "Strong outline",
             description = "Color of the outline on an active strong guardian.",
             position = 5,
-			section = outlines
+            section = outlines
     )
-    default Color strongGuardianColor()
-    {
+    default Color strongGuardianColor() {
         return Color.GREEN;
     }
+
     @Alpha
     @ConfigItem(
             keyName = "overchargedGuardianColor",
             name = "Overcharged outline",
             description = "Color of the outline on an active overcharged guardian.",
             position = 6,
-			section = outlines
+            section = outlines
     )
-    default Color overchargedGuardianColor()
-    {
+    default Color overchargedGuardianColor() {
         return Color.RED;
     }
 
@@ -233,20 +226,18 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
             position = 7,
             section = outlines
     )
-    default Color essencePileColor()
-    {
+    default Color essencePileColor() {
         return Color.GREEN;
     }
-    
+
     @ConfigItem(
             keyName = "startTimerOverlayLocation",
             name = "Start Timer Overlay Location",
             description = "Toggles the start timer overlay location.",
-            position =  8,
+            position = 8,
             section = overlays
     )
-    default TimerOverlayLocation startTimerOverlayLocation()
-    {
+    default TimerOverlayLocation startTimerOverlayLocation() {
         return TimerOverlayLocation.InfoBox;
     }
 
@@ -254,11 +245,10 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
             keyName = "inactivePortalOverlayLocation",
             name = "Inactive Portal Overlay Location",
             description = "Toggles the inactive portal overlay location.",
-            position =  9,
+            position = 9,
             section = overlays
     )
-    default TimerOverlayLocation inactivePortalOverlayLocation()
-    {
+    default TimerOverlayLocation inactivePortalOverlayLocation() {
         return TimerOverlayLocation.InfoBox;
     }
 
@@ -266,47 +256,201 @@ public interface GuardiansOfTheRiftHelperConfig extends Config
             keyName = "showPointsOverlay",
             name = "Show Points Overlay",
             description = "Toggles the points overlay.",
-            position =  10,
+            position = 10,
             section = overlays
     )
-    default boolean showPointsOverlay()
-    {
+    default boolean showPointsOverlay() {
         return true;
     }
 
-	@ConfigItem(
-		keyName = "potentialPoints",
-		name = "Show potential points",
-		description = "Show tallied up points during a game",
-		position =  11,
-		section = overlays
-	)
-	default boolean potentialPoints() { return true; }
+    @ConfigItem(
+            keyName = "potentialPoints",
+            name = "Show potential points",
+            description = "Show tallied up points during a game",
+            position = 11,
+            section = overlays
+    )
+    default boolean potentialPoints() {
+        return true;
+    }
 
-	@ConfigItem(
-		keyName = "highlightPotential",
-		name = "Highlight potential points",
-		description =  "Highlight potential points depending on balance",
-		position =  12,
-		section = overlays
-	)
-	default boolean highlightPotential() { return true; }
-	@Alpha
-	@ConfigItem(
-		keyName = "potentialUnbalanceColor",
-		name = "Unbalanced potential color",
-		description =  "Color to highlight potential points when unbalanced",
-		position = 13,
-		section = overlays
-	)
-	default Color potentialUnbalanceColor() { return Color.RED; }
-	@Alpha
-	@ConfigItem(
-		keyName = "potentialBalanceColor",
-		name = "Balanced potential color",
-		description =  "Color to highlight potential points when balanced",
-		position =  14,
-		section = overlays
-	)
-	default Color potentialBalanceColor() { return Color.GREEN; }
+    @ConfigItem(
+            keyName = "highlightPotential",
+            name = "Highlight potential points",
+            description = "Highlight potential points depending on balance",
+            position = 12,
+            section = overlays
+    )
+    default boolean highlightPotential() {
+        return true;
+    }
+
+    @Alpha
+    @ConfigItem(
+            keyName = "potentialUnbalanceColor",
+            name = "Unbalanced potential color",
+            description = "Color to highlight potential points when unbalanced",
+            position = 13,
+            section = overlays
+    )
+    default Color potentialUnbalanceColor() {
+        return Color.RED;
+    }
+
+    @Alpha
+    @ConfigItem(
+            keyName = "potentialBalanceColor",
+            name = "Balanced potential color",
+            description = "Color to highlight potential points when balanced",
+            position = 14,
+            section = overlays
+    )
+    default Color potentialBalanceColor() {
+        return Color.GREEN;
+    }
+
+
+    @ConfigItem(
+            keyName = "portalSpawn",
+            name = "Notify on portal spawn",
+            description = "Notifies you when a portal spawns.",
+            position = 0,
+            section = notifications
+    )
+    default boolean notifyPortalSpawn() {
+        return true;
+    }
+
+    @ConfigItem(
+            keyName = "airSpawn",
+            name = "Notify on Air Guardian",
+            description = "Notifies you when an air guardian opens.",
+            position = 1,
+            section = notifications
+    )
+    default boolean notifyAirGuardian() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "mindSpawn",
+            name = "Notify on Mind Guardian",
+            description = "Notifies you when an mind guardian opens.",
+            position = 2,
+            section = notifications
+    )
+    default boolean notifyMindGuardian() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "waterSpawn",
+            name = "Notify on Water Guardian",
+            description = "Notifies you when a water guardian opens.",
+            position = 3,
+            section = notifications
+    )
+    default boolean notifyWaterGuardian() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "earthSpawn",
+            name = "Notify on Earth Guardian",
+            description = "Notifies you when an earth guardian opens.",
+            position = 4,
+            section = notifications
+    )
+    default boolean notifyEarthGuardian() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "fireSpawn",
+            name = "Notify on Fire Guardian",
+            description = "Notifies you when a fire guardian opens.",
+            position = 5,
+            section = notifications
+    )
+    default boolean notifyFireGuardian() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "bodySpawn",
+            name = "Notify on Body Guardian",
+            description = "Notifies you when a body guardian opens.",
+            position = 6,
+            section = notifications
+    )
+    default boolean notifyBodyGuardian() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "cosmicSpawn",
+            name = "Notify on Cosmic Guardian",
+            description = "Notifies you when a cosmic guardian opens.",
+            position = 7,
+            section = notifications
+    )
+    default boolean notifyCosmicGuardian() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "chaosSpawn",
+            name = "Notify on Chaos Guardian",
+            description = "Notifies you when a chaos guardian opens.",
+            position = 8,
+            section = notifications
+    )
+    default boolean notifyChaosGuardian() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "natureSpawn",
+            name = "Notify on Nature Guardian",
+            description = "Notifies you when a nature guardian opens.",
+            position = 9,
+            section = notifications
+    )
+    default boolean notifyNatureGuardian() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "lawSpawn",
+            name = "Notify on Law Guardian",
+            description = "Notifies you when a law guardian opens.",
+            position = 10,
+            section = notifications
+    )
+    default boolean notifyLawGuardian() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "deathSpawn",
+            name = "Notify on Death Guardian",
+            description = "Notifies you when a death guardian opens.",
+            position = 11,
+            section = notifications
+    )
+    default boolean notifyDeathGuardian() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "bloodSpawn",
+            name = "Notify on Blood Guardian",
+            description = "Notifies you when a blood guardian opens.",
+            position = 12,
+            section = notifications
+    )
+    default boolean notifyBloodGuardian() {
+        return false;
+    }
+
 }
