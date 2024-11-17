@@ -310,23 +310,24 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
 
     @ConfigItem(
             keyName = "colorGuardiansWithInsufficientRunecraftingLevel",
-            name = "Color guardians if Runecrafting level is insufficient",
-            description = "Outlines active portal guardians with color if the required Runecrafting level exceeds the players current Runecrafting level.",
+            name = "Recolor Unusable Guardians",
+            description = "Outlines active portal guardians with this color if the player is not a high enough Runecrafting level to use them.",
             position = 7,
             section = outlines
     )
     default boolean colorGuardiansWithInsufficientRunecraftingLevel() { return false; }
 
+    @Alpha
     @ConfigItem(
             keyName = "colorGuardiansWithInsufficientRunecraftingLevelColor",
-            name = "Color that guardians get if Runecrafting level is insufficient",
-            description = "Color of the outline on the active catalytic guardian if it is too high level.",
+            name = "Unusable Guardian Colors",
+            description = "Color of the outline on the active guardian if it is too high level.",
             position = 8,
             section = outlines
     )
     default Color colorGuardiansWithInsufficientRunecraftingLevelColor()
     {
-        return Color.RED;
+        return Color.PINK;
     }
   
     @Alpha
