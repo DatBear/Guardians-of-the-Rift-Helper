@@ -15,9 +15,17 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     String generalNotifications = "generalNotifications";
 
     @ConfigSection(
+            name = "Menu Swaps",
+            description = "All options relating to menu entry swaps",
+            position = 1,
+            closedByDefault = false
+    )
+    String menuSwaps = "menuSwaps";
+
+    @ConfigSection(
             name = "Outlines",
             description = "All options relating to colored outlines",
-            position = 1,
+            position = 2,
             closedByDefault = true
     )
     String outlines = "outlines";
@@ -25,7 +33,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     @ConfigSection(
             name = "Overlays",
             description = "All options relating to overlays",
-            position = 2,
+            position = 3,
             closedByDefault = true
 
     )
@@ -34,7 +42,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     @ConfigSection(
             name = "Guardian Render Style",
             closedByDefault = true,
-            position = 3,
+            position = 4,
             description = "Highlighting style"
     )
     String style = "style";
@@ -42,7 +50,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     @ConfigSection(
             name = "Guardian Active Notifications",
             closedByDefault = true,
-            position = 4,
+            position = 5,
             description = "Choose when you are notified about guardians becoming active."
     )
     String guardianNotifications = "guardianNotifications";
@@ -65,6 +73,9 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     default boolean muteApprentices() {
         return true;
     }
+
+
+
 
 
     @ConfigItem(
@@ -146,6 +157,33 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     )
     default int guardianFragmentsAmount() {
         return 0;
+    }
+
+
+
+
+
+
+    @ConfigItem(
+            keyName = "hideGreatGuardianPowerUp",
+            name = "Hide Power-Up",
+            description = "Hides the left click Power-Up option on the Great Guardian when you can't power him up (no stones).",
+            position = 1,
+            section = menuSwaps
+    )
+    default boolean hideGreatGuardianPowerUp() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "hidePlaceCell",
+            name = "Hide Place-cell",
+            description = "Hides the left click Place-cell option on the cell tiles when you can't place a cell (no charged cells).",
+            position = 2,
+            section = menuSwaps
+    )
+    default boolean hideCellTilePlaceCell() {
+        return false;
     }
 
 
@@ -369,7 +407,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             section = overlays
     )
     default TimerOverlayLocation startTimerOverlayLocation() {
-        return TimerOverlayLocation.InfoBox;
+        return TimerOverlayLocation.Info_Box;
     }
 
     @ConfigItem(
@@ -380,7 +418,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             section = overlays
     )
     default TimerOverlayLocation inactivePortalOverlayLocation() {
-        return TimerOverlayLocation.InfoBox;
+        return TimerOverlayLocation.Info_Box;
     }
 
     @ConfigItem(
@@ -441,10 +479,25 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     }
 
 
+
+
+
+    @ConfigItem(
+            keyName = "notifyGuardianCondition",
+            name = "Notify on",
+            description = "Determines when guardian notifications will trigger.",
+            position = 0,
+            section = guardianNotifications
+    )
+    default NotifyGuardianCondition notifyGuardianCondition() {
+        return NotifyGuardianCondition.Full_Inventory;
+    }
+
+
     @ConfigItem(
             keyName = "airSpawn",
             name = "Notify on Air Guardian",
-            description = "Notifies you when an air guardian opens.",
+            description = "Notifies you when an air guardian portal opens.",
             position = 1,
             section = guardianNotifications
     )
@@ -455,7 +508,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     @ConfigItem(
             keyName = "mindSpawn",
             name = "Notify on Mind Guardian",
-            description = "Notifies you when an mind guardian opens.",
+            description = "Notifies you when an mind guardian portal opens.",
             position = 2,
             section = guardianNotifications
     )
@@ -466,7 +519,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     @ConfigItem(
             keyName = "waterSpawn",
             name = "Notify on Water Guardian",
-            description = "Notifies you when a water guardian opens.",
+            description = "Notifies you when a water guardian portal opens.",
             position = 3,
             section = guardianNotifications
     )
@@ -477,7 +530,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     @ConfigItem(
             keyName = "earthSpawn",
             name = "Notify on Earth Guardian",
-            description = "Notifies you when an earth guardian opens.",
+            description = "Notifies you when an earth guardian portal opens.",
             position = 4,
             section = guardianNotifications
     )
@@ -488,7 +541,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     @ConfigItem(
             keyName = "fireSpawn",
             name = "Notify on Fire Guardian",
-            description = "Notifies you when a fire guardian opens.",
+            description = "Notifies you when a fire guardian portal opens.",
             position = 5,
             section = guardianNotifications
     )
@@ -499,7 +552,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     @ConfigItem(
             keyName = "bodySpawn",
             name = "Notify on Body Guardian",
-            description = "Notifies you when a body guardian opens.",
+            description = "Notifies you when a body guardian portal opens.",
             position = 6,
             section = guardianNotifications
     )
@@ -510,7 +563,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     @ConfigItem(
             keyName = "cosmicSpawn",
             name = "Notify on Cosmic Guardian",
-            description = "Notifies you when a cosmic guardian opens.",
+            description = "Notifies you when a cosmic guardian portal opens.",
             position = 7,
             section = guardianNotifications
     )
@@ -521,7 +574,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     @ConfigItem(
             keyName = "chaosSpawn",
             name = "Notify on Chaos Guardian",
-            description = "Notifies you when a chaos guardian opens.",
+            description = "Notifies you when a chaos guardian portal opens.",
             position = 8,
             section = guardianNotifications
     )
@@ -532,7 +585,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     @ConfigItem(
             keyName = "natureSpawn",
             name = "Notify on Nature Guardian",
-            description = "Notifies you when a nature guardian opens.",
+            description = "Notifies you when a nature guardian portal opens.",
             position = 9,
             section = guardianNotifications
     )
@@ -543,7 +596,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     @ConfigItem(
             keyName = "lawSpawn",
             name = "Notify on Law Guardian",
-            description = "Notifies you when a law guardian opens.",
+            description = "Notifies you when a law guardian portal opens.",
             position = 10,
             section = guardianNotifications
     )
@@ -554,7 +607,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     @ConfigItem(
             keyName = "deathSpawn",
             name = "Notify on Death Guardian",
-            description = "Notifies you when a death guardian opens.",
+            description = "Notifies you when a death guardian portal opens.",
             position = 11,
             section = guardianNotifications
     )
@@ -565,7 +618,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
     @ConfigItem(
             keyName = "bloodSpawn",
             name = "Notify on Blood Guardian",
-            description = "Notifies you when a blood guardian opens.",
+            description = "Notifies you when a blood guardian portal opens.",
             position = 12,
             section = guardianNotifications
     )

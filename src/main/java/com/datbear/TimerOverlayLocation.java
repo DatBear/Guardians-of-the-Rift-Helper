@@ -2,7 +2,7 @@ package com.datbear;
 
 public enum TimerOverlayLocation {
     Hidden,
-    InfoBox,
-    GameOverlay,
+    Info_Box,
+    Game_Overlay,
     Both
 }
