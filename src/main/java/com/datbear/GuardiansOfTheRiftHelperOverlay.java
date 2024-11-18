@@ -194,7 +194,7 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
         }
 
         NPC greatGuardian = plugin.getGreatGuardian();
-        if(plugin.isOutlineGreatGuardian() && greatGuardian != null){
+        if(plugin.isHasAnyStones() && greatGuardian != null){
             modelOutlineRenderer.drawOutline(greatGuardian, 2, Color.GREEN, 2);
         }
     }
@@ -216,7 +216,7 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
         }
 
         var depositPool = plugin.getDepositPool();
-        if(plugin.isOutlineDepositPool() && depositPool != null){
+        if(plugin.isHasAnyRunes() && depositPool != null){
             modelOutlineRenderer.drawOutline(depositPool, 2, GREEN, 2);
         }
     }

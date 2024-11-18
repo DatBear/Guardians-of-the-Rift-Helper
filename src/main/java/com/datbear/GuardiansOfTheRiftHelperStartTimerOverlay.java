@@ -30,7 +30,7 @@ public class GuardiansOfTheRiftHelperStartTimerOverlay extends Overlay {
             return null;
         }
 
-        if(config.startTimerOverlayLocation() != TimerOverlayLocation.GameOverlay && config.startTimerOverlayLocation() != TimerOverlayLocation.Both){
+        if(config.startTimerOverlayLocation() != TimerOverlayLocation.Game_Overlay && config.startTimerOverlayLocation() != TimerOverlayLocation.Both){
             return null;
         }
 

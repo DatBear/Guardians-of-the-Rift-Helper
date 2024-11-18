@@ -4,6 +4,7 @@ import com.google.inject.Provides;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.Menu;
 import net.runelite.api.*;
 import net.runelite.api.events.*;
 import net.runelite.api.widgets.Widget;
@@ -74,6 +75,13 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
     private static final int CHISEL_ID = 1755;
     private static final int OVERCHARGED_CELL_ID = 26886;
 
+    private static final Set<Integer> CHARGED_CELL_ITEM_IDS = new HashSet<>() {{
+        add(ItemID.WEAK_CELL);
+        add(ItemID.MEDIUM_CELL);
+        add(ItemID.STRONG_CELL);
+        add(ItemID.OVERCHARGED_CELL);
+    }};
+
     private static final int DEPOSIT_POOL_ID = 43696;
 
     private static final int GUARDIAN_ACTIVE_ANIM = 9363;
@@ -122,11 +130,17 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
     @Getter(AccessLevel.PACKAGE)
     private boolean isInMainRegion;
     @Getter(AccessLevel.PACKAGE)
-    private boolean outlineGreatGuardian = false;
+    private boolean hasAnyStones = false;
     @Getter(AccessLevel.PACKAGE)
     private boolean outlineUnchargedCellTable = false;
     @Getter(AccessLevel.PACKAGE)
-    private boolean outlineDepositPool = false;
+    private boolean hasAnyRunes = false;
+    @Getter(AccessLevel.PACKAGE)
+    private boolean hasAnyChargedCells = false;
+    @Getter(AccessLevel.PACKAGE)
+    private boolean hasAnyGuardianEssence = false;
+    @Getter(AccessLevel.PACKAGE)
+    private boolean hasFullInventory = false;
     @Getter(AccessLevel.PACKAGE)
     private boolean shouldMakeGuardian = false;
     @Getter(AccessLevel.PACKAGE)
@@ -217,11 +231,13 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
         }
 
         Item[] items = event.getItemContainer().getItems();
-        outlineGreatGuardian = Arrays.stream(items).anyMatch(x -> x.getId() == ELEMENTAL_GUARDIAN_STONE_ID || x.getId() == CATALYTIC_GUARDIAN_STONE_ID || x.getId() == POLYELEMENTAL_GUARDIAN_STONE_ID);
+        hasAnyStones = Arrays.stream(items).anyMatch(x -> x.getId() == ELEMENTAL_GUARDIAN_STONE_ID || x.getId() == CATALYTIC_GUARDIAN_STONE_ID || x.getId() == POLYELEMENTAL_GUARDIAN_STONE_ID);
         outlineUnchargedCellTable = Arrays.stream(items).noneMatch(x -> x.getId() == UNCHARGED_CELL_ITEM_ID);
         shouldMakeGuardian = Arrays.stream(items).anyMatch(x -> x.getId() == CHISEL_ID) && Arrays.stream(items).anyMatch(x -> x.getId() == OVERCHARGED_CELL_ID) && areGuardiansNeeded;
-
-        outlineDepositPool = Arrays.stream(items).anyMatch(x -> RUNE_IDS.contains(x.getId()));
+        hasAnyRunes = Arrays.stream(items).anyMatch(x -> RUNE_IDS.contains(x.getId()));
+        hasAnyChargedCells = Arrays.stream(items).anyMatch(x -> CHARGED_CELL_ITEM_IDS.contains(x.getId()));
+        hasAnyGuardianEssence = Arrays.stream(items).anyMatch(x -> x.getId() == ItemID.GUARDIAN_ESSENCE);
+        hasFullInventory = Arrays.stream(items).allMatch(x -> x.getId() != -1);
 
         List<Integer> invTalismans = Arrays.stream(items).mapToInt(x -> x.getId()).filter(x -> TALISMAN_IDS.contains(x)).boxed().collect(Collectors.toList());
         if (invTalismans.stream().count() != inventoryTalismans.stream().count()) {
@@ -331,7 +347,10 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
                     var currentGuardian = optionalGuardian.get();
                     currentGuardian.spawn();
                     if (currentGuardian.notifyFunc.apply(config)) {
-                        notifier.notify("A portal to the " + currentGuardian.name + " altar has opened.");
+                        var condition = config.notifyGuardianCondition();
+                        if(condition == NotifyGuardianCondition.Always || (condition == NotifyGuardianCondition.Have_Guardian_Essence && hasAnyGuardianEssence) || (condition == NotifyGuardianCondition.Full_Inventory && hasFullInventory)){
+                            notifier.notify("A portal to the " + currentGuardian.name + " altar has opened.");
+                        }
                     }
                 }
             }
@@ -440,8 +459,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
             hasNotifiedGameStart = false;
             nextGameStart = Optional.of(Instant.now().plusSeconds(60));
         } else if (msg.contains("You found some loot:")) {
-            elementalRewardPoints = Math.max(0, elementalRewardPoints-1);
-            catalyticRewardPoints = Math.max(0, catalyticRewardPoints-1);
+            elementalRewardPoints = Math.max(0, elementalRewardPoints - 1);
+            catalyticRewardPoints = Math.max(0, catalyticRewardPoints - 1);
         }
 
         Matcher rewardPointMatcher = REWARD_POINT_PATTERN.matcher(msg);
@@ -451,19 +470,6 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
             catalyticRewardPoints = Integer.parseInt(rewardPointMatcher.group(2).replaceAll(",", ""));
         }
         //log.info(msg);
-    }
-
-    private void reset() {
-        guardians.clear();
-        activeGuardians.clear();
-        unchargedCellTable = null;
-        depositPool = null;
-        greatGuardian = null;
-        catalyticEssencePile = null;
-        elementalEssencePile = null;
-        if (isInMinigame || isInMainRegion) {
-            client.clearHintArrow();
-        }
     }
 
     @Provides
@@ -492,6 +498,43 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
         }
         if (config.muteApprentices()) {
             event.getActor().setOverheadText(" ");
+        }
+    }
+
+    @Subscribe(priority = -1)
+    public void onPostMenuSort(PostMenuSort e) {
+        if (!isInMinigame && !isInMainRegion) {
+            return;
+        }
+
+        var menu = client.getMenu();
+        SwapMenu(menu);
+
+    }
+
+
+    private void SwapMenu(Menu menu) {
+        var entries = menu.getMenuEntries();
+        if (config.hideGreatGuardianPowerUp() && !hasAnyStones) {
+            entries = Arrays.stream(entries).filter(x -> !x.getOption().contains("Power-up") || !x.getTarget().contains("Great Guardian")).toArray(MenuEntry[]::new);
+        }
+        if (config.hideCellTilePlaceCell() && !hasAnyChargedCells) {
+            entries = Arrays.stream(entries).filter(x -> !x.getOption().contains("Place-cell")).toArray(MenuEntry[]::new);
+        }
+
+        menu.setMenuEntries(entries);
+    }
+
+    private void reset() {
+        guardians.clear();
+        activeGuardians.clear();
+        unchargedCellTable = null;
+        depositPool = null;
+        greatGuardian = null;
+        catalyticEssencePile = null;
+        elementalEssencePile = null;
+        if (isInMinigame || isInMainRegion) {
+            client.clearHintArrow();
         }
     }
 

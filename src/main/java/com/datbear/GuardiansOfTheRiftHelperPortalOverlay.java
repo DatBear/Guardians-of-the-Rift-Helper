@@ -1,11 +1,9 @@
 package com.datbear;
 
 import net.runelite.api.Client;
-import net.runelite.api.widgets.Widget;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
-import net.runelite.client.ui.overlay.OverlayPriority;
 import net.runelite.client.util.ImageUtil;
 
 import javax.inject.Inject;
@@ -40,7 +38,7 @@ public class GuardiansOfTheRiftHelperPortalOverlay extends Overlay {
             return null;
         }
 
-        if(config.inactivePortalOverlayLocation() != TimerOverlayLocation.GameOverlay && config.inactivePortalOverlayLocation() != TimerOverlayLocation.Both){
+        if(config.inactivePortalOverlayLocation() != TimerOverlayLocation.Game_Overlay && config.inactivePortalOverlayLocation() != TimerOverlayLocation.Both){
             return null;
         }
 

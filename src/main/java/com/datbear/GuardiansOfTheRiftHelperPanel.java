@@ -39,7 +39,7 @@ public class GuardiansOfTheRiftHelperPanel extends OverlayPanel {
 
         Optional<Instant> gameStart = plugin.getNextGameStart();
         if (gameStart.isPresent()) {
-            if (config.startTimerOverlayLocation() == TimerOverlayLocation.InfoBox || config.startTimerOverlayLocation() == TimerOverlayLocation.Both) {
+            if (config.startTimerOverlayLocation() == TimerOverlayLocation.Info_Box || config.startTimerOverlayLocation() == TimerOverlayLocation.Both) {
                 int timeToStart = ((int) ChronoUnit.SECONDS.between(Instant.now(), gameStart.get()));
                 if (timeToStart >= 0) {
                     panelComponent.getChildren().add(LineComponent.builder()
@@ -49,7 +49,7 @@ public class GuardiansOfTheRiftHelperPanel extends OverlayPanel {
                 }
             }
         } else {
-            if (config.inactivePortalOverlayLocation() == TimerOverlayLocation.InfoBox || config.inactivePortalOverlayLocation() == TimerOverlayLocation.Both) {
+            if (config.inactivePortalOverlayLocation() == TimerOverlayLocation.Info_Box || config.inactivePortalOverlayLocation() == TimerOverlayLocation.Both) {
                 Optional<Instant> despawn = plugin.getLastPortalDespawnTime();
                 var timeSincePortal = despawn.isPresent() ? ((int) (ChronoUnit.SECONDS.between(despawn.get(), Instant.now()))) : 0;
                 if (timeSincePortal >= 0) {
