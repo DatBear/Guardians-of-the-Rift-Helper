@@ -186,6 +186,17 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
         return false;
     }
 
+    @ConfigItem(
+            keyName = "hideRuneUse",
+            name = "Drop Runes",
+            description = "Hides the left click Use option on runes in the main game area.",
+            position = 3,
+            section = menuSwaps
+    )
+    default MinigameLocation hideRuneUse() {
+        return MinigameLocation.Nowhere;
+    }
+
 
     @ConfigItem(
             keyName = "guardianOutline",

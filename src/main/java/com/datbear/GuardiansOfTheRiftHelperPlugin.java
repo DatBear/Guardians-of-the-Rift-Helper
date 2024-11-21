@@ -14,7 +14,6 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
-
 import javax.inject.Inject;
 import java.awt.*;
 import java.time.Instant;
@@ -348,7 +347,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
                     currentGuardian.spawn();
                     if (currentGuardian.notifyFunc.apply(config)) {
                         var condition = config.notifyGuardianCondition();
-                        if(condition == NotifyGuardianCondition.Always || (condition == NotifyGuardianCondition.Have_Guardian_Essence && hasAnyGuardianEssence) || (condition == NotifyGuardianCondition.Full_Inventory && hasFullInventory)){
+                        if (condition == NotifyGuardianCondition.Always || (condition == NotifyGuardianCondition.Have_Guardian_Essence && hasAnyGuardianEssence) || (condition == NotifyGuardianCondition.Full_Inventory && hasFullInventory)) {
                             notifier.notify("A portal to the " + currentGuardian.name + " altar has opened.");
                         }
                     }
@@ -506,8 +505,12 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
         if (!isInMinigame && !isInMainRegion) {
             return;
         }
+        if (client.isMenuOpen()) {
+            return;
+        }
 
         var menu = client.getMenu();
+
         SwapMenu(menu);
 
     }
@@ -520,6 +523,12 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
         }
         if (config.hideCellTilePlaceCell() && !hasAnyChargedCells) {
             entries = Arrays.stream(entries).filter(x -> !x.getOption().contains("Place-cell")).toArray(MenuEntry[]::new);
+        }
+
+        if (config.hideRuneUse() == MinigameLocation.Everywhere || (config.hideRuneUse() == MinigameLocation.Main_Room && isInMainRegion)) {
+            entries = Arrays.stream(entries).filter(x -> !x.getOption().contains("Use") || !x.getTarget().toLowerCase(Locale.ROOT).contains(" rune") || x.getType() != MenuAction.WIDGET_TARGET).toArray(MenuEntry[]::new);
+            var dropEntry = Arrays.stream(entries).filter(x -> x.getOption().contains("Drop") && x.getTarget().toLowerCase(Locale.ROOT).contains("rune")).findFirst();
+            dropEntry.ifPresent(x -> x.setType(MenuAction.CC_OP));
         }
 
         menu.setMenuEntries(entries);
