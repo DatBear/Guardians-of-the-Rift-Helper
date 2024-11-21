@@ -9,4 +9,4 @@
 * Adds configurable notifications before game start, on guardian fragment amount, on first altar, and when guardian portals open.
 * Adds options to hide left-click menu entries that are not possible.
 
-For feature suggestions feel free to open an issue or contact me on Discord, `@datbear`.
+For feature suggestions feel free to [open an issue](https://github.com/DatBear/Guardians-of-the-Rift-Helper/issues/new) or contact me on Discord, `@datbear`.
