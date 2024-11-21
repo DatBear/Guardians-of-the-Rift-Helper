@@ -85,8 +85,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             position = 0,
             section = generalNotifications
     )
-    default boolean notifyPortalSpawn() {
-        return true;
+    default Notification notifyPortalSpawn() {
+        return Notification.ON;
     }
 
     @ConfigItem(
@@ -96,8 +96,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             position = 1,
             section = generalNotifications
     )
-    default boolean notifyBeforeGameStart() {
-        return false;
+    default Notification notifyBeforeGameStart() {
+        return Notification.OFF;
     }
 
     @ConfigItem(
@@ -120,8 +120,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             section = generalNotifications
     )
     @Range(min = 0, max = 119)
-    default boolean notifyBeforeFirstAltar() {
-        return false;
+    default Notification notifyBeforeFirstAltar() {
+        return Notification.OFF;
     }
 
     @ConfigItem(
@@ -144,8 +144,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             position = 4,
             section = generalNotifications
     )
-    default boolean notifyGuardianFragments() {
-        return true;
+    default Notification notifyGuardianFragments() {
+        return Notification.ON;
     }
 
     @ConfigItem(
@@ -512,8 +512,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             position = 1,
             section = guardianNotifications
     )
-    default boolean notifyAirGuardian() {
-        return false;
+    default Notification notifyAirGuardian() {
+        return Notification.OFF;
     }
 
     @ConfigItem(
@@ -523,8 +523,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             position = 2,
             section = guardianNotifications
     )
-    default boolean notifyMindGuardian() {
-        return false;
+    default Notification notifyMindGuardian() {
+        return Notification.OFF;
     }
 
     @ConfigItem(
@@ -534,8 +534,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             position = 3,
             section = guardianNotifications
     )
-    default boolean notifyWaterGuardian() {
-        return false;
+    default Notification notifyWaterGuardian() {
+        return Notification.OFF;
     }
 
     @ConfigItem(
@@ -545,8 +545,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             position = 4,
             section = guardianNotifications
     )
-    default boolean notifyEarthGuardian() {
-        return false;
+    default Notification notifyEarthGuardian() {
+        return Notification.OFF;
     }
 
     @ConfigItem(
@@ -556,8 +556,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             position = 5,
             section = guardianNotifications
     )
-    default boolean notifyFireGuardian() {
-        return false;
+    default Notification notifyFireGuardian() {
+        return Notification.OFF;
     }
 
     @ConfigItem(
@@ -567,8 +567,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             position = 6,
             section = guardianNotifications
     )
-    default boolean notifyBodyGuardian() {
-        return false;
+    default Notification notifyBodyGuardian() {
+        return Notification.OFF;
     }
 
     @ConfigItem(
@@ -578,8 +578,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             position = 7,
             section = guardianNotifications
     )
-    default boolean notifyCosmicGuardian() {
-        return false;
+    default Notification notifyCosmicGuardian() {
+        return Notification.OFF;
     }
 
     @ConfigItem(
@@ -589,8 +589,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             position = 8,
             section = guardianNotifications
     )
-    default boolean notifyChaosGuardian() {
-        return false;
+    default Notification notifyChaosGuardian() {
+        return Notification.OFF;
     }
 
     @ConfigItem(
@@ -600,8 +600,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             position = 9,
             section = guardianNotifications
     )
-    default boolean notifyNatureGuardian() {
-        return false;
+    default Notification notifyNatureGuardian() {
+        return Notification.OFF;
     }
 
     @ConfigItem(
@@ -611,8 +611,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             position = 10,
             section = guardianNotifications
     )
-    default boolean notifyLawGuardian() {
-        return false;
+    default Notification notifyLawGuardian() {
+        return Notification.OFF;
     }
 
     @ConfigItem(
@@ -622,8 +622,8 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             position = 11,
             section = guardianNotifications
     )
-    default boolean notifyDeathGuardian() {
-        return false;
+    default Notification notifyDeathGuardian() {
+        return Notification.OFF;
     }
 
     @ConfigItem(
@@ -633,7 +633,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             position = 12,
             section = guardianNotifications
     )
-    default boolean notifyBloodGuardian() {
-        return false;
+    default Notification notifyBloodGuardian() {
+        return Notification.OFF;
     }
 }
