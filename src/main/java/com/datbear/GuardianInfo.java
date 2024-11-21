@@ -2,6 +2,7 @@ package com.datbear;
 
 import com.google.common.collect.ImmutableSet;
 import net.runelite.api.ItemID;
+import net.runelite.client.config.Notification;
 import net.runelite.client.game.ItemManager;
 
 import java.awt.*;
@@ -35,11 +36,11 @@ public class GuardianInfo {
     public int spriteId;
     public boolean isCatalytic;
     public CellType cellType;
-    public Function<GuardiansOfTheRiftHelperConfig, Boolean> notifyFunc;
+    public Function<GuardiansOfTheRiftHelperConfig, Notification> notifyFunc;
 
     public Optional<Instant> spawnTime = Optional.empty();
 
-    public GuardianInfo(String name, int gameObjectId, int levelRequired, int runeId, int talismanId, int spriteId, boolean isCatalytic, CellType cellType, Function<GuardiansOfTheRiftHelperConfig, Boolean> notifyFunc) {
+    public GuardianInfo(String name, int gameObjectId, int levelRequired, int runeId, int talismanId, int spriteId, boolean isCatalytic, CellType cellType, Function<GuardiansOfTheRiftHelperConfig, Notification> notifyFunc) {
         this.name = name;
         this.gameObjectId = gameObjectId;
         this.levelRequired = levelRequired;

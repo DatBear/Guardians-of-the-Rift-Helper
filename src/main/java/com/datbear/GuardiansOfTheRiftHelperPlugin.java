@@ -244,12 +244,12 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
             inventoryTalismans.addAll(invTalismans);
         }
 
-        if (config.notifyGuardianFragments() && config.guardianFragmentsAmount() > 0) {
+        if (config.notifyGuardianFragments().isEnabled() && config.guardianFragmentsAmount() > 0) {
             var optNewFragments = Arrays.stream(items).filter(x -> x.getId() == ItemID.GUARDIAN_FRAGMENTS).findFirst();
             if (optNewFragments.isPresent()) {
                 var quantity = optNewFragments.get().getQuantity();
                 if (quantity >= config.guardianFragmentsAmount() && previousGuardianFragments < config.guardianFragmentsAmount()) {
-                    notifier.notify("You have mined " + config.guardianFragmentsAmount() + "+ guardian fragments.");
+                    notifier.notify(config.notifyGuardianFragments(), "You have mined " + config.guardianFragmentsAmount() + "+ guardian fragments.");
                 }
                 previousGuardianFragments = quantity;
             }
@@ -297,10 +297,10 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
                 if (isFirstPortal) {
                     isFirstPortal = false;
                 }
-                if (config.notifyPortalSpawn()) {
+                if (config.notifyPortalSpawn().isEnabled()) {
                     String compass = portalTextWidget.getText().split(" ")[0];
                     String full = expandCardinal.getOrDefault(compass, "unknown");
-                    notifier.notify("A portal has spawned in the " + full + ".");
+                    notifier.notify(config.notifyPortalSpawn(), "A portal has spawned in the " + full + ".");
                 }
             }
             portalLocation = portalTextWidget.getText();
@@ -345,10 +345,10 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
                 if (optionalGuardian.isPresent()) {
                     var currentGuardian = optionalGuardian.get();
                     currentGuardian.spawn();
-                    if (currentGuardian.notifyFunc.apply(config)) {
+                    if (currentGuardian.notifyFunc.apply(config).isEnabled()) {
                         var condition = config.notifyGuardianCondition();
                         if (condition == NotifyGuardianCondition.Always || (condition == NotifyGuardianCondition.Have_Guardian_Essence && hasAnyGuardianEssence) || (condition == NotifyGuardianCondition.Full_Inventory && hasFullInventory)) {
-                            notifier.notify("A portal to the " + currentGuardian.name + " altar has opened.");
+                            notifier.notify(currentGuardian.notifyFunc.apply(config), "A portal to the " + currentGuardian.name + " altar has opened.");
                         }
                     }
                 }
@@ -386,7 +386,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
 
         if (gameObject.getId() == PORTAL_ID) {
             portal = gameObject;
-            if (config.notifyPortalSpawn()) {
+            if (config.notifyPortalSpawn().isEnabled()) {
                 // The hint arrow is cleared under the following circumstances:
                 // 1. Player enters the portal
                 // 2. Plugin is "reset()"
@@ -548,31 +548,31 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
     }
 
     private void NotifyBeforeGameStart() {
-        if (hasNotifiedGameStart || !nextGameStart.isPresent() || !config.notifyBeforeGameStart()) return;
+        if (hasNotifiedGameStart || !nextGameStart.isPresent() || !config.notifyBeforeGameStart().isEnabled()) return;
 
         var start = nextGameStart.get();
         var secondsToStart = ChronoUnit.SECONDS.between(Instant.now(), start) - .5d;
         if (secondsToStart < config.beforeGameStartSeconds()) {
             if (config.beforeGameStartSeconds() > 0) {
-                notifier.notify("The next game is starting in " + config.beforeGameStartSeconds() + " seconds!");
+                notifier.notify(config.notifyBeforeGameStart(), "The next game is starting in " + config.beforeGameStartSeconds() + " seconds!");
             } else {
-                notifier.notify("The next game is starting now!");
+                notifier.notify(config.notifyBeforeGameStart(), "The next game is starting now!");
             }
             hasNotifiedGameStart = true;
         }
     }
 
     private void NotifyBeforeFirstAltar() {
-        if (hasNotifiedFirstRift || !gameStarted.isPresent() || !config.notifyBeforeFirstAltar()) return;
+        if (hasNotifiedFirstRift || !gameStarted.isPresent() || !config.notifyBeforeFirstAltar().isEnabled()) return;
 
         var start = gameStarted.get();
         var secondsToRift = ChronoUnit.SECONDS.between(Instant.now(), start.plusSeconds(120)) - .5d;
 
         if (secondsToRift < config.beforeFirstAltarSeconds()) {
             if (config.beforeFirstAltarSeconds() > 0) {
-                notifier.notify("The first altar is in " + config.beforeFirstAltarSeconds() + " seconds!");
+                notifier.notify(config.notifyBeforeFirstAltar(), "The first altar is in " + config.beforeFirstAltarSeconds() + " seconds!");
             } else {
-                notifier.notify("The first altar is opening now!");
+                notifier.notify(config.notifyBeforeFirstAltar(), "The first altar is opening now!");
             }
             hasNotifiedFirstRift = true;
         }
