@@ -60,6 +60,10 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
     private static final Set<Integer> GUARDIAN_IDS = GuardianInfo.ALL.stream().mapToInt(x -> x.gameObjectId).boxed().collect(Collectors.toSet());
     private static final Set<Integer> RUNE_IDS = GuardianInfo.ALL.stream().mapToInt(x -> x.runeId).boxed().collect(Collectors.toSet());
     private static final Set<Integer> TALISMAN_IDS = GuardianInfo.ALL.stream().mapToInt(x -> x.talismanId).boxed().collect(Collectors.toSet());
+
+    private static final Set<Integer> CHARGED_CELL_ITEM_IDS = CellTileInfo.ALL.stream().mapToInt(x -> x.itemId).boxed().collect(Collectors.toSet());
+    private static final Set<Integer> CELL_TILE_IDS = CellTileInfo.ALL.stream().mapToInt(x -> x.groundObjectId).boxed().collect(Collectors.toSet());
+
     private static final int GREAT_GUARDIAN_ID = 11403;
 
     private static final int CATALYTIC_GUARDIAN_STONE_ID = 26880;
@@ -74,12 +78,6 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
     private static final int CHISEL_ID = 1755;
     private static final int OVERCHARGED_CELL_ID = 26886;
 
-    private static final Set<Integer> CHARGED_CELL_ITEM_IDS = new HashSet<>() {{
-        add(ItemID.WEAK_CELL);
-        add(ItemID.MEDIUM_CELL);
-        add(ItemID.STRONG_CELL);
-        add(ItemID.OVERCHARGED_CELL);
-    }};
 
     private static final int DEPOSIT_POOL_ID = 43696;
 
@@ -112,6 +110,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
     @Getter(AccessLevel.PACKAGE)
     private final Set<Integer> inventoryTalismans = new HashSet<>();
     @Getter(AccessLevel.PACKAGE)
+    private final Set<GroundObject> cellTiles = new HashSet<>();
+    @Getter(AccessLevel.PACKAGE)
     private NPC greatGuardian;
     @Getter(AccessLevel.PACKAGE)
     private GameObject unchargedCellTable;
@@ -136,6 +136,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
     private boolean hasAnyRunes = false;
     @Getter(AccessLevel.PACKAGE)
     private boolean hasAnyChargedCells = false;
+    @Getter(AccessLevel.PACKAGE)
+    private Optional<CellType> chargedCellType;
     @Getter(AccessLevel.PACKAGE)
     private boolean hasAnyGuardianEssence = false;
     @Getter(AccessLevel.PACKAGE)
@@ -206,6 +208,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
 
     @Override
     protected void startUp() {
+        CELL_TILE_IDS.add(CellTileInfo.WEAK.groundObjectId);
         overlayManager.add(overlay);
         overlayManager.add(panel);
         overlayManager.add(startTimerOverlay);
@@ -235,6 +238,10 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
         shouldMakeGuardian = Arrays.stream(items).anyMatch(x -> x.getId() == CHISEL_ID) && Arrays.stream(items).anyMatch(x -> x.getId() == OVERCHARGED_CELL_ID) && areGuardiansNeeded;
         hasAnyRunes = Arrays.stream(items).anyMatch(x -> RUNE_IDS.contains(x.getId()));
         hasAnyChargedCells = Arrays.stream(items).anyMatch(x -> CHARGED_CELL_ITEM_IDS.contains(x.getId()));
+        chargedCellType = Arrays.stream(items)
+                .filter(x -> CHARGED_CELL_ITEM_IDS.contains(x.getId()))
+                .map(x -> CellTileInfo.ALL.stream().filter(c -> c.itemId == x.getId()).findFirst().get().cellType).findFirst();
+
         hasAnyGuardianEssence = Arrays.stream(items).anyMatch(x -> x.getId() == ItemID.GUARDIAN_ESSENCE);
         hasFullInventory = Arrays.stream(items).allMatch(x -> x.getId() != -1);
 
@@ -404,6 +411,16 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
     }
 
     @Subscribe
+    public void onGroundObjectSpawned(GroundObjectSpawned event) {
+        var groundObject = event.getGroundObject();
+
+        if (CELL_TILE_IDS.contains(groundObject.getId())) {
+            cellTiles.removeIf(x -> x.getWorldLocation().distanceTo(groundObject.getWorldLocation()) < 1);
+            cellTiles.add(groundObject);
+        }
+    }
+
+    @Subscribe
     public void onNpcSpawned(NpcSpawned npcSpawned) {
         NPC npc = npcSpawned.getNpc();
         if (npc.getId() == GREAT_GUARDIAN_ID) {
@@ -537,6 +554,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
     private void reset() {
         guardians.clear();
         activeGuardians.clear();
+        cellTiles.clear();
         unchargedCellTable = null;
         depositPool = null;
         greatGuardian = null;

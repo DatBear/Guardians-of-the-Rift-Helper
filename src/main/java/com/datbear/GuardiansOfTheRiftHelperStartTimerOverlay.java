@@ -30,7 +30,7 @@ public class GuardiansOfTheRiftHelperStartTimerOverlay extends Overlay {
             return null;
         }
 
-        if(config.startTimerOverlayLocation() != TimerOverlayLocation.Game_Overlay && config.startTimerOverlayLocation() != TimerOverlayLocation.Both){
+        if (config.startTimerOverlayLocation() != TimerOverlayLocation.Game_Overlay && config.startTimerOverlayLocation() != TimerOverlayLocation.Both) {
             return null;
         }
 
@@ -47,6 +47,9 @@ public class GuardiansOfTheRiftHelperStartTimerOverlay extends Overlay {
 
             var parentWidget = client.getWidget(plugin.getParentWidgetId());
             var portalWidget = client.getWidget(plugin.getPortalWidgetId());
+            if (parentWidget == null || portalWidget == null) {
+                return null;
+            }
             var x = parentWidget.getRelativeX() + 16;
             var y = parentWidget.getRelativeY() + portalWidget.getRelativeY() + 60;
 
