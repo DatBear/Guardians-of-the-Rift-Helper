@@ -1,4 +1,8 @@
 # Guardians of the Rift Helper
+
+![image](https://img.shields.io/endpoint?url=https://api.runelite.net/pluginhub/shields/rank/plugin/guardians-of-the-rift-helper)
+![image](https://img.shields.io/endpoint?url=https://api.runelite.net/pluginhub/shields/installs/plugin/guardians-of-the-rift-helper)
+
 * Adds outlines to the currently active elemental + catalytic rune guardians.
 * Adds rune icons + timers above the active rune guardians.
 * Highlights the Great Guardian when you have catalytic or elemental essence to give to him.
