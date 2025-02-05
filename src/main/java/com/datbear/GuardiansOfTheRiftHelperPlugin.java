@@ -78,6 +78,10 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
     private static final int CHISEL_ID = 1755;
     private static final int OVERCHARGED_CELL_ID = 26886;
 
+    private static final int HUGE_GUARDRIAN_REMAINS_AREA_LEFT_BOUNDARY = 3587;
+    private static final int HUGE_GUARDRIAN_REMAINS_AREA_RIGHT_BOUNDARY = 3594;
+    private static final int HUGE_GUARDRIAN_REMAINS_AREA_TOP_BOUNDARY = 9516;
+    private static final int HUGE_GUARDRIAN_REMAINS_AREA_BOTTOM_BOUNDARY = 9496;
 
     private static final int DEPOSIT_POOL_ID = 43696;
 
@@ -206,6 +210,19 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
         return Arrays.stream(currentMapRegions).anyMatch(x -> x == MINIGAME_MAIN_REGION);
     }
 
+    private boolean shouldNotifyThatPortalSpawned() {
+        return config.notifyPortalSpawn().isEnabled() && !playerIsInHugeGuardianRemainsArea();
+    }
+
+    private boolean playerIsInHugeGuardianRemainsArea() {
+        int playerX = client.getLocalPlayer().getWorldLocation().getX();
+        int playerY = client.getLocalPlayer().getWorldLocation().getY();
+        return playerX > HUGE_GUARDRIAN_REMAINS_AREA_LEFT_BOUNDARY &&
+                playerX < HUGE_GUARDRIAN_REMAINS_AREA_RIGHT_BOUNDARY &&
+                playerY < HUGE_GUARDRIAN_REMAINS_AREA_TOP_BOUNDARY &&
+                playerY > HUGE_GUARDRIAN_REMAINS_AREA_BOTTOM_BOUNDARY;
+    }
+
     @Override
     protected void startUp() {
         CELL_TILE_IDS.add(CellTileInfo.WEAK.groundObjectId);
@@ -304,7 +321,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
                 if (isFirstPortal) {
                     isFirstPortal = false;
                 }
-                if (config.notifyPortalSpawn().isEnabled()) {
+                if (shouldNotifyThatPortalSpawned()) {
                     String compass = portalTextWidget.getText().split(" ")[0];
                     String full = expandCardinal.getOrDefault(compass, "unknown");
                     notifier.notify(config.notifyPortalSpawn(), "A portal has spawned in the " + full + ".");
@@ -393,7 +410,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
 
         if (gameObject.getId() == PORTAL_ID) {
             portal = gameObject;
-            if (config.notifyPortalSpawn().isEnabled()) {
+            if (shouldNotifyThatPortalSpawned()) {
                 // The hint arrow is cleared under the following circumstances:
                 // 1. Player enters the portal
                 // 2. Plugin is "reset()"
