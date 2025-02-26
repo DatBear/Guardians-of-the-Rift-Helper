@@ -78,10 +78,10 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
     private static final int CHISEL_ID = 1755;
     private static final int OVERCHARGED_CELL_ID = 26886;
 
-    private static final int HUGE_GUARDRIAN_REMAINS_AREA_LEFT_BOUNDARY = 3587;
-    private static final int HUGE_GUARDRIAN_REMAINS_AREA_RIGHT_BOUNDARY = 3594;
-    private static final int HUGE_GUARDRIAN_REMAINS_AREA_TOP_BOUNDARY = 9516;
-    private static final int HUGE_GUARDRIAN_REMAINS_AREA_BOTTOM_BOUNDARY = 9496;
+    private static final int HUGE_GUARDRIAN_REMAINS_AREA_WEST_BOUNDARY = 3587;
+    private static final int HUGE_GUARDRIAN_REMAINS_AREA_EAST_BOUNDARY = 3594;
+    private static final int HUGE_GUARDRIAN_REMAINS_AREA_NORTH_BOUNDARY = 9516;
+    private static final int HUGE_GUARDRIAN_REMAINS_AREA_SOUTH_BOUNDARY = 9496;
 
     private static final int DEPOSIT_POOL_ID = 43696;
 
@@ -217,10 +217,10 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
     private boolean playerIsInHugeGuardianRemainsArea() {
         int playerX = client.getLocalPlayer().getWorldLocation().getX();
         int playerY = client.getLocalPlayer().getWorldLocation().getY();
-        return playerX > HUGE_GUARDRIAN_REMAINS_AREA_LEFT_BOUNDARY &&
-                playerX < HUGE_GUARDRIAN_REMAINS_AREA_RIGHT_BOUNDARY &&
-                playerY < HUGE_GUARDRIAN_REMAINS_AREA_TOP_BOUNDARY &&
-                playerY > HUGE_GUARDRIAN_REMAINS_AREA_BOTTOM_BOUNDARY;
+        return playerX > HUGE_GUARDRIAN_REMAINS_AREA_WEST_BOUNDARY &&
+                playerX < HUGE_GUARDRIAN_REMAINS_AREA_EAST_BOUNDARY &&
+                playerY < HUGE_GUARDRIAN_REMAINS_AREA_NORTH_BOUNDARY &&
+                playerY > HUGE_GUARDRIAN_REMAINS_AREA_SOUTH_BOUNDARY;
     }
 
     @Override
