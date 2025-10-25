@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Menu;
+import net.runelite.api.gameval.ItemID;
 import net.runelite.api.*;
 import net.runelite.api.events.*;
 import net.runelite.api.widgets.Widget;
@@ -66,9 +67,11 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
 
     private static final int GREAT_GUARDIAN_ID = 11403;
 
-    private static final int CATALYTIC_GUARDIAN_STONE_ID = 26880;
-    private static final int ELEMENTAL_GUARDIAN_STONE_ID = 26881;
-    private static final int POLYELEMENTAL_GUARDIAN_STONE_ID = 26941;
+    private static final int CATALYTIC_GUARDIAN_STONE_ID = ItemID.GOTR_GUARDIAN_STONE_CATALYTIC;
+    private static final int ELEMENTAL_GUARDIAN_STONE_ID = ItemID.GOTR_GUARDIAN_STONE_ELEMENTAL;
+    private static final int POLYELEMENTAL_GUARDIAN_STONE_ID = ItemID.GOTR_GUARDIAN_STONE_POLYELEMENTAL;
+    private static final int POLYCATALYTIC_GUARDIAN_STONE_ID = ItemID.GOTR_GUARDIAN_STONE_POLYCATALYTIC;
+
 
     private static final int ELEMENTAL_ESSENCE_PILE_ID = 43722;
     private static final int CATALYTIC_ESSENCE_PILE_ID = 43723;
@@ -250,7 +253,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
         }
 
         Item[] items = event.getItemContainer().getItems();
-        hasAnyStones = Arrays.stream(items).anyMatch(x -> x.getId() == ELEMENTAL_GUARDIAN_STONE_ID || x.getId() == CATALYTIC_GUARDIAN_STONE_ID || x.getId() == POLYELEMENTAL_GUARDIAN_STONE_ID);
+        hasAnyStones = Arrays.stream(items).anyMatch(x -> x.getId() == ELEMENTAL_GUARDIAN_STONE_ID || x.getId() == CATALYTIC_GUARDIAN_STONE_ID || x.getId() == POLYELEMENTAL_GUARDIAN_STONE_ID || x.getId() == POLYCATALYTIC_GUARDIAN_STONE_ID);
         outlineUnchargedCellTable = Arrays.stream(items).noneMatch(x -> x.getId() == UNCHARGED_CELL_ITEM_ID);
         shouldMakeGuardian = Arrays.stream(items).anyMatch(x -> x.getId() == CHISEL_ID) && Arrays.stream(items).anyMatch(x -> x.getId() == OVERCHARGED_CELL_ID) && areGuardiansNeeded;
         hasAnyRunes = Arrays.stream(items).anyMatch(x -> RUNE_IDS.contains(x.getId()));
@@ -259,7 +262,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
                 .filter(x -> CHARGED_CELL_ITEM_IDS.contains(x.getId()))
                 .map(x -> CellTileInfo.ALL.stream().filter(c -> c.itemId == x.getId()).findFirst().get().cellType).findFirst();
 
-        hasAnyGuardianEssence = Arrays.stream(items).anyMatch(x -> x.getId() == ItemID.GUARDIAN_ESSENCE);
+        hasAnyGuardianEssence = Arrays.stream(items).anyMatch(x -> x.getId() == ItemID.GOTR_GUARDIAN_ESSENCE);
         hasFullInventory = Arrays.stream(items).allMatch(x -> x.getId() != -1);
 
         List<Integer> invTalismans = Arrays.stream(items).mapToInt(x -> x.getId()).filter(x -> TALISMAN_IDS.contains(x)).boxed().collect(Collectors.toList());
@@ -269,7 +272,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
         }
 
         if (config.notifyGuardianFragments().isEnabled() && config.guardianFragmentsAmount() > 0) {
-            var optNewFragments = Arrays.stream(items).filter(x -> x.getId() == ItemID.GUARDIAN_FRAGMENTS).findFirst();
+            var optNewFragments = Arrays.stream(items).filter(x -> x.getId() == ItemID.GOTR_GUARDIAN_FRAGMENT).findFirst();
             if (optNewFragments.isPresent()) {
                 var quantity = optNewFragments.get().getQuantity();
                 if (quantity >= config.guardianFragmentsAmount() && previousGuardianFragments < config.guardianFragmentsAmount()) {
