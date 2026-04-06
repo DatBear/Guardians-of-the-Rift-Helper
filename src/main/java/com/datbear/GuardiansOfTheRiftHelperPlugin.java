@@ -233,7 +233,9 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
         overlayManager.add(panel);
         overlayManager.add(startTimerOverlay);
         overlayManager.add(portalOverlay);
-        isInMinigame = true;
+        // Initialize presence flags based on current client state instead of defaulting to true
+        isInMinigame = checkInMinigame();
+        isInMainRegion = checkInMainRegion();
 
     }
 
@@ -244,6 +246,9 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
         overlayManager.remove(startTimerOverlay);
         overlayManager.remove(portalOverlay);
         reset();
+        // Clear presence flags on shutdown
+        isInMinigame = false;
+        isInMainRegion = false;
     }
 
     @Subscribe
