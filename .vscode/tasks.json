@@ -1,0 +1,118 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Gradle: Build",
+      "type": "shell",
+      "command": ".\\gradlew.bat",
+      "args": [
+        "build"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Gradle: Test",
+      "type": "shell",
+      "command": ".\\gradlew.bat",
+      "args": [
+        "test"
+      ],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Gradle: Clean",
+      "type": "shell",
+      "command": ".\\gradlew.bat",
+      "args": [
+        "clean"
+      ],
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Gradle: RuneLite (Debug)",
+      "type": "shell",
+      "command": ".\\gradlew.bat",
+      "args": [
+        "runRuneLite"
+      ],
+      "group": {
+        "kind": "build"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "RuneLite: Start Debug (Background)",
+      "type": "shell",
+      "command": ".\\gradlew.bat",
+      "args": [
+        "runRuneLite"
+      ],
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "rune",
+        "pattern": {
+          "regexp": "^(.*)$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^> Task :runRuneLite$",
+          "endsPattern": "^Listening for transport dt_socket.*$"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Gradle: Copy Runtime Deps",
+      "type": "shell",
+      "command": ".\\gradlew.bat",
+      "args": [
+        "copyRuntimeDeps"
+      ],
+      "group": {
+        "kind": "build"
+      },
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    }
+  ]
+}
