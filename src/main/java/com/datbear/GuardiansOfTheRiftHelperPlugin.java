@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Menu;
+import net.runelite.api.gameval.InventoryID;
 import net.runelite.api.gameval.ItemID;
 import net.runelite.api.*;
 import net.runelite.api.events.*;
@@ -144,7 +145,7 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
     @Getter(AccessLevel.PACKAGE)
     private boolean hasAnyChargedCells = false;
     @Getter(AccessLevel.PACKAGE)
-    private Optional<CellType> chargedCellType;
+    private Optional<CellType> chargedCellType = Optional.empty();
     @Getter(AccessLevel.PACKAGE)
     private boolean hasAnyGuardianEssence = false;
     @Getter(AccessLevel.PACKAGE)
@@ -209,7 +210,12 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
     }
 
     private boolean checkInMainRegion() {
-        int[] currentMapRegions = client.getMapRegions();
+		GameState gameState = client.getGameState();
+		if (gameState != GameState.LOGGED_IN && gameState != GameState.LOADING) {
+			return false;
+		}
+
+        int[] currentMapRegions = client.getTopLevelWorldView().getMapRegions();
         return Arrays.stream(currentMapRegions).anyMatch(x -> x == MINIGAME_MAIN_REGION);
     }
 
@@ -253,7 +259,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
 
     @Subscribe
     public void onItemContainerChanged(ItemContainerChanged event) {
-        if ((!isInMainRegion && !isInMinigame) || event.getItemContainer() != client.getItemContainer(InventoryID.INVENTORY)) {
+
+        if ((!isInMainRegion && !isInMinigame) || event.getItemContainer() != client.getItemContainer(InventoryID.INV)) {
             return;
         }
 
@@ -270,8 +277,8 @@ public class GuardiansOfTheRiftHelperPlugin extends Plugin {
         hasAnyGuardianEssence = Arrays.stream(items).anyMatch(x -> x.getId() == ItemID.GOTR_GUARDIAN_ESSENCE);
         hasFullInventory = Arrays.stream(items).allMatch(x -> x.getId() != -1);
 
-        List<Integer> invTalismans = Arrays.stream(items).mapToInt(x -> x.getId()).filter(x -> TALISMAN_IDS.contains(x)).boxed().collect(Collectors.toList());
-        if (invTalismans.stream().count() != inventoryTalismans.stream().count()) {
+        List<Integer> invTalismans = Arrays.stream(items).mapToInt(Item::getId).filter(TALISMAN_IDS::contains).boxed().collect(Collectors.toList());
+        if (invTalismans.size() != inventoryTalismans.size()) {
             inventoryTalismans.clear();
             inventoryTalismans.addAll(invTalismans);
         }
