@@ -12,9 +12,13 @@ repositories {
 
 def runeLiteVersion = 'latest.release'
 
+configurations {
+	runeLiteRuntime
+}
+
 dependencies {
 	compileOnly group: 'net.runelite', name:'client', version: runeLiteVersion
-	runtimeOnly group: 'net.runelite', name:'client', version: runeLiteVersion
+	runeLiteRuntime group: 'net.runelite', name:'client', version: runeLiteVersion
 
 	compileOnly 'org.projectlombok:lombok:1.18.20'
 	annotationProcessor 'org.projectlombok:lombok:1.18.20'
@@ -37,8 +41,8 @@ tasks.register('runRuneLite', JavaExec) {
 	group = 'run'
 	description = 'Run RuneLite client with plugin and enable JDWP (port 5005) for debugging'
 	mainClass.set('net.runelite.client.RuneLite')
-	// Use runtimeClasspath (now includes client via runtimeOnly) plus compiled classes
-	classpath = sourceSets.main.runtimeClasspath
+	// Keep the client off the plugin runtimeClasspath so plugin-hub packaging stays clean.
+	classpath = sourceSets.main.runtimeClasspath + configurations.runeLiteRuntime
 	jvmArgs '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'
 	// Forward UTF-8 and any desired system properties
 	systemProperties System.getProperties().findAll { k, _ -> k.startsWith('runelite.') }
@@ -49,7 +53,7 @@ tasks.register('printRuntimeCp') {
     group = 'help'
     description = 'Print runtime classpath as a single line for launch.json classPaths'
     doLast {
-        println sourceSets.main.runtimeClasspath.asPath
+		println (sourceSets.main.runtimeClasspath + configurations.runeLiteRuntime).asPath
     }
 }
 
@@ -59,7 +63,7 @@ tasks.register('copyRuntimeDeps', Copy) {
 	group = 'build'
 	description = 'Copy runtime dependency JARs into lib/ for wildcard classpath use in VS Code.'
 	// Only copy files (JARs); exclude directories that are part of the runtimeClasspath
-	from(configurations.runtimeClasspath.filter { it.isFile() })
+	from((configurations.runtimeClasspath + configurations.runeLiteRuntime).filter { it.isFile() })
 	into("${projectDir}/lib")
 	// Overwrite existing versions; Gradle cache keeps uniqueness by hash in filename
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
