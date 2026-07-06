@@ -7,4 +7,5 @@ build
 nbactions.xml
 nb-configuration.xml
 nbproject/
-.vscode/
+*.jar
+*.class

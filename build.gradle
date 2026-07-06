@@ -14,6 +14,7 @@ def runeLiteVersion = 'latest.release'
 
 dependencies {
 	compileOnly group: 'net.runelite', name:'client', version: runeLiteVersion
+	runtimeOnly group: 'net.runelite', name:'client', version: runeLiteVersion
 
 	compileOnly 'org.projectlombok:lombok:1.18.20'
 	annotationProcessor 'org.projectlombok:lombok:1.18.20'
@@ -29,4 +30,37 @@ version = '1.2'
 tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
 	options.release.set(11)
+}
+
+// Task to run RuneLite client with this plugin on the classpath and JDWP enabled for VS Code attach
+tasks.register('runRuneLite', JavaExec) {
+	group = 'run'
+	description = 'Run RuneLite client with plugin and enable JDWP (port 5005) for debugging'
+	mainClass.set('net.runelite.client.RuneLite')
+	// Use runtimeClasspath (now includes client via runtimeOnly) plus compiled classes
+	classpath = sourceSets.main.runtimeClasspath
+	jvmArgs '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'
+	// Forward UTF-8 and any desired system properties
+	systemProperties System.getProperties().findAll { k, _ -> k.startsWith('runelite.') }
+}
+
+// Prints the full runtime classpath (Windows ; separated) for use in a direct VS Code launch config
+tasks.register('printRuntimeCp') {
+    group = 'help'
+    description = 'Print runtime classpath as a single line for launch.json classPaths'
+    doLast {
+        println sourceSets.main.runtimeClasspath.asPath
+    }
+}
+
+// Copy all runtime dependency JARs (excluding compiled output dirs) into a flat lib/ directory
+// so we can use a concise wildcard (lib/*) in VS Code launch.json instead of enumerating .gradle cache paths.
+tasks.register('copyRuntimeDeps', Copy) {
+	group = 'build'
+	description = 'Copy runtime dependency JARs into lib/ for wildcard classpath use in VS Code.'
+	// Only copy files (JARs); exclude directories that are part of the runtimeClasspath
+	from(configurations.runtimeClasspath.filter { it.isFile() })
+	into("${projectDir}/lib")
+	// Overwrite existing versions; Gradle cache keeps uniqueness by hash in filename
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }

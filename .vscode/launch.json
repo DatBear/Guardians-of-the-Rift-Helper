@@ -1,0 +1,37 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Run RuneLite (Wildcard Classpath)",
+      "request": "launch",
+      "mainClass": "net.runelite.client.RuneLite",
+      "classPaths": [
+        "${workspaceFolder}/build/classes/java/main",
+        "${workspaceFolder}/build/resources/main",
+        "${workspaceFolder}/lib/*"
+      ],
+      "preLaunchTask": "Gradle: Copy Runtime Deps",
+      "console": "internalConsole",
+      "cwd": "${workspaceFolder}",
+      "vmArgs": "-Dfile.encoding=UTF-8"
+    },
+    {
+      "type": "java",
+      "name": "Attach to RuneLite (port 5005)",
+      "request": "attach",
+      "hostName": "localhost",
+      "port": 5005,
+      "timeout": 120000,
+      "preLaunchTask": "RuneLite: Start Debug (Background)"
+    },
+    {
+      "type": "java",
+      "name": "Launch RuneLite (Debug Console) (Legacy - Attach Alternative)",
+      "request": "launch",
+      "mainClass": "net.runelite.client.RuneLite",
+      "vmArgs": "-Dfile.encoding=UTF-8",
+      "console": "internalConsole"
+    }
+  ]
+}

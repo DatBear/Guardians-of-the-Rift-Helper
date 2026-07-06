@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "vscjava.vscode-java-pack",
+    "vscjava.vscode-gradle",
+    "vscjava.vscode-lombok",
+    "vscjava.vscode-java-test",
+    "vscjava.vscode-java-debug",
+    "vscjava.vscode-java-dependency"
+  ]
+}
