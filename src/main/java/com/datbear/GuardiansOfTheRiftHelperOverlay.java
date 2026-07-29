@@ -17,9 +17,6 @@ import java.util.Comparator;
 import java.util.Set;
 
 public class GuardiansOfTheRiftHelperOverlay extends Overlay {
-    private static final Color GREEN = new Color(0, 255, 0, 150);
-    private static final Color RED = new Color(255, 0, 0, 150);
-
     private static final int GUARDIAN_TICK_COUNT = 33;
     private static final int PORTAL_TICK_COUNT = 43;
 
@@ -197,7 +194,7 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
 
         NPC greatGuardian = plugin.getGreatGuardian();
         if (plugin.isHasAnyStones() && greatGuardian != null) {
-            modelOutlineRenderer.drawOutline(greatGuardian, 2, Color.GREEN, 2);
+            modelOutlineRenderer.drawOutline(greatGuardian, 2, config.mainOutlineColor(), 2);
         }
     }
 
@@ -208,7 +205,7 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
 
         GameObject table = plugin.getUnchargedCellTable();
         if (plugin.isOutlineUnchargedCellTable() && table != null) {
-            modelOutlineRenderer.drawOutline(table, 2, GREEN, 2);
+            modelOutlineRenderer.drawOutline(table, 2, config.mainOutlineColor(), 2);
         }
     }
 
@@ -219,7 +216,7 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
 
         var depositPool = plugin.getDepositPool();
         if (plugin.isHasAnyRunes() && depositPool != null) {
-            modelOutlineRenderer.drawOutline(depositPool, 2, GREEN, 2);
+            modelOutlineRenderer.drawOutline(depositPool, 2, config.mainOutlineColor(), 2);
         }
     }
 
@@ -238,12 +235,12 @@ public class GuardiansOfTheRiftHelperOverlay extends Overlay {
 
         if (config.outlineCellTileLocation() == TileLocation.Closest) {
             var closest = plugin.getCellTiles().stream().sorted(Comparator.comparingInt(a -> a.getWorldLocation().distanceTo(client.getLocalPlayer().getWorldLocation()))).findFirst();
-            closest.ifPresent(x -> modelOutlineRenderer.drawOutline(x, 2, GREEN, 2));
+            closest.ifPresent(x -> modelOutlineRenderer.drawOutline(x, 2, config.mainOutlineColor(), 2));
             return;
         }
 
         for (var tile : plugin.getCellTiles()) {
-            modelOutlineRenderer.drawOutline(tile, 2, GREEN, 2);
+            modelOutlineRenderer.drawOutline(tile, 2, config.mainOutlineColor(), 2);
         }
     }
 }
