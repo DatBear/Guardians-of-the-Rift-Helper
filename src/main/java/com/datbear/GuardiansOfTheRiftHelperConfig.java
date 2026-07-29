@@ -273,7 +273,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             name = "Outline Great Guardian",
             description = "Outlines the Great Guardian when you have elemental, catalytic, or polyelemental stones in your inventory.",
             section = outlines,
-            position = 2
+            position = 3
     )
     default boolean outlineGreatGuardian() {
         return true;
@@ -284,7 +284,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             name = "Outline Cell Tiles",
             description = "Outlines Cell tiles when you have this tier or higher charged cell in your inventory.",
             section = outlines,
-            position = 3
+            position = 4
     )
     default CellType outlineCellType() {
         return CellType.Weak;
@@ -295,10 +295,22 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             name = "Outline Cell Tile Location",
             description = "Outlines Cell tiles in these locations.",
             section = outlines,
-            position = 4
+            position = 5
     )
     default TileLocation outlineCellTileLocation() {
         return TileLocation.Closest;
+    }
+
+    @Alpha
+    @ConfigItem(
+        keyName = "mainOutlineColor",
+        name = "Main outline",
+        description = "Color of the main outlines.",
+        section = outlines,
+        position = 6
+    )
+    default Color mainOutlineColor() {
+        return Color.GREEN;
     }
 
     @Alpha
@@ -307,7 +319,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             name = "Elemental outline",
             description = "Color of the outline on the active elemental guardian.",
             section = outlines,
-            position = 5
+            position = 7
     )
     default Color elementalGuardianColor() {
         return Color.GREEN;
@@ -319,7 +331,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             name = "Catalytic outline",
             description = "Color of the outline on the active catalytic guardian.",
             section = outlines,
-            position = 6
+            position = 8
     )
     default Color catalyticGuardianColor() {
         return Color.RED;
@@ -330,7 +342,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "outlineGuardiansByTier",
             name = "Color guardians by cell tier",
             description = "Outlines active portal guardians with colors based on their Cell charge tiers instead of Elemental vs Catalytic.",
-            position = 7,
+            position = 9,
             section = outlines
     )
     default boolean colorGuardiansByTier() {
@@ -342,7 +354,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "weakGuardianColor",
             name = "Weak outline",
             description = "Color of the outline on an active weak guardian.",
-            position = 8,
+            position = 10,
             section = outlines
     )
     default Color weakGuardianColor() {
@@ -354,7 +366,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "mediumGuardianColor",
             name = "Medium outline",
             description = "Color of the outline on an active medium guardian.",
-            position = 9,
+            position = 11,
             section = outlines
     )
     default Color mediumGuardianColor() {
@@ -366,7 +378,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "strongGuardianColor",
             name = "Strong outline",
             description = "Color of the outline on an active strong guardian.",
-            position = 10,
+            position = 12,
             section = outlines
     )
     default Color strongGuardianColor() {
@@ -378,7 +390,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "overchargedGuardianColor",
             name = "Overcharged outline",
             description = "Color of the outline on an active overcharged guardian.",
-            position = 11,
+            position = 13,
             section = outlines
     )
     default Color overchargedGuardianColor() {
@@ -389,7 +401,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "colorGuardiansWithInsufficientRunecraftingLevel",
             name = "Recolor Unusable Guardians",
             description = "Outlines active portal guardians with this color if the player is not a high enough Runecrafting level to use them.",
-            position = 12,
+            position = 14,
             section = outlines
     )
     default boolean colorGuardiansWithInsufficientRunecraftingLevel() {
@@ -401,7 +413,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "colorGuardiansWithInsufficientRunecraftingLevelColor",
             name = "Unusable Guardian Colors",
             description = "Color of the outline on the active guardian if it is too high level.",
-            position = 13,
+            position = 15,
             section = outlines
     )
     default Color colorGuardiansWithInsufficientRunecraftingLevelColor() {
@@ -412,7 +424,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "pointBalanceHelper",
             name = "Balance Helper",
             description = "Highlights the guardian needed to keep points balanced or highest tier",
-            position = 14,
+            position = 16,
             section = outlines
     )
     default boolean pointBalanceHelper() {
@@ -424,7 +436,7 @@ public interface GuardiansOfTheRiftHelperConfig extends Config {
             keyName = "essencePileColor",
             name = "Essence pile outline",
             description = "Color of the outline on essence piles.",
-            position = 15,
+            position = 17,
             section = outlines
     )
     default Color essencePileColor() {
